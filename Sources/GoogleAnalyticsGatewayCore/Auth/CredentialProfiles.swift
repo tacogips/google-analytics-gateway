@@ -119,9 +119,13 @@ public struct CredentialProfileConfiguration: Codable, Equatable, Sendable {
       }
     } ?? configDirectory
     do {
+      // The alias check compares resolved profile paths against the config
+      // document, so the config path must be spelled the same way the
+      // profile paths are: joined onto the realpath'd directory.
+      let resolvedConfigURL = resolvedDirectory.appendingPathComponent(configURL.lastPathComponent)
       return try decode(Data(contentsOf: configURL)).resolvingPaths(
         relativeTo: resolvedDirectory,
-        configURL: configURL
+        configURL: resolvedConfigURL
       )
     } catch let error as GatewayError {
       throw error
@@ -177,8 +181,24 @@ public struct CredentialProfileConfiguration: Codable, Equatable, Sendable {
   private func resolvedPath(_ value: String?, relativeTo directory: URL) throws -> String? {
     guard let value else { return nil }
     guard SecureLocalFiles.isSafePath(value) else { throw configurationError("Configured path is unsafe") }
-    let url = value.hasPrefix("/") ? URL(fileURLWithPath: value) : directory.appendingPathComponent(value)
-    return url.standardizedFileURL.path
+    let joined = value.hasPrefix("/") ? value : directory.appendingPathComponent(value).path
+    // Dot segments are collapsed textually rather than via `standardizedFileURL`,
+    // which also rewrites `/private/var/...` back to the `/var` symlink that
+    // SecureLocalFiles' O_NOFOLLOW traversal must refuse (the config directory
+    // was realpath-resolved for exactly that reason).
+    var components: [String] = []
+    for component in joined.split(separator: "/") {
+      switch component {
+      case ".":
+        continue
+      case "..":
+        guard !components.isEmpty else { throw configurationError("Configured path is unsafe") }
+        components.removeLast()
+      default:
+        components.append(String(component))
+      }
+    }
+    return "/" + components.joined(separator: "/")
   }
 
   /// Two profiles sharing a token store would let a lower tier read a higher

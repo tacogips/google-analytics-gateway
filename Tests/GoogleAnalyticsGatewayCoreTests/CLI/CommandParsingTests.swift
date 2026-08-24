@@ -67,11 +67,19 @@ struct CommandParsingTests {
     #expect(!pretty)
   }
 
-  @Test("graphql schema accepts no options at all")
+  @Test("graphql schema ignores the global selection options and rejects the rest")
   func parsesGraphQLSchema() throws {
     #expect(try CommandParser.parse(["graphql", "schema"]) == .graphQLSchema)
+    // The global --config/--profile options are tolerated (the schema renders
+    // locally) so callers can keep a shared command prefix.
+    #expect(
+      try CommandParser.parse(["graphql", "schema", "--profile", "reader-one"]) == .graphQLSchema
+    )
+    #expect(
+      try CommandParser.parse(["graphql", "schema", "--config", "/tmp/c.json"]) == .graphQLSchema
+    )
     #expect(throws: GatewayError.self) {
-      try CommandParser.parse(["graphql", "schema", "--profile", "reader-one"])
+      try CommandParser.parse(["graphql", "schema", "--variables", "{}"])
     }
     #expect(throws: GatewayError.self) {
       try CommandParser.parse(["graphql", "schema", "extra"])

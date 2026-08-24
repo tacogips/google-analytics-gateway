@@ -239,6 +239,32 @@ public enum SecureLocalFiles {
     return lstat(path, &metadata) == 0
   }
 
+  /// Creates any missing ancestors of `path` with mode 0700 and verifies the
+  /// immediate parent is a private, owner-held directory.
+  ///
+  /// Called before an interactive OAuth flow starts so an unwritable
+  /// token-store destination fails up front instead of after a single-use
+  /// authorization code has already been exchanged.
+  public static func ensurePrivateParent(ofPath path: String) throws {
+    let target = try Target(path: path)
+    var fd = open("/", O_RDONLY | O_DIRECTORY)
+    guard fd >= 0 else { throw fileError("Unable to open filesystem root") }
+    defer { close(fd) }
+    for component in target.directory {
+      var next = openat(fd, component, O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
+      if next < 0 && errno == ENOENT {
+        guard mkdirat(fd, component, 0o700) == 0 else {
+          throw fileError("Unable to create the token-store directory")
+        }
+        next = openat(fd, component, O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
+      }
+      guard next >= 0 else { throw fileError("Configured path contains an unsafe directory") }
+      close(fd)
+      fd = next
+    }
+    try validatePrivateDirectory(fd)
+  }
+
   /// Rejects empty, oversized, and control-character-bearing path strings
   /// before any of them reaches a syscall.
   public static func isSafePath(_ value: String) -> Bool {

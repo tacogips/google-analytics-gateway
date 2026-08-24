@@ -93,8 +93,10 @@ public struct OAuthToken: Codable, Equatable, Sendable {
   }
 
   /// A credential is a bounded run of printable non-space bytes: anything that
-  /// could break a header or wrap onto a second line is not one.
-  private static func isCredential(_ value: String) -> Bool {
+  /// could break a header or wrap onto a second line is not one. Internal so
+  /// the credential resolver applies the same rule to environment-injected
+  /// tokens.
+  static func isCredential(_ value: String) -> Bool {
     !value.isEmpty && value.utf8.count <= 8_192 && !value.utf8.contains(where: { $0 < 33 || $0 == 127 })
   }
 }

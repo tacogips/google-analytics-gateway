@@ -8,6 +8,8 @@ import Foundation
 /// unsupported feature from a typo.
 public struct GraphQLParser: Sendable {
   public static let maximumDocumentLength = 64 * 1024
+  /// Maximum nesting depth of argument value literals and list types.
+  public static let maximumValueDepth = 16
   public static let maximumTopLevelQueryFields = 10
   public static let maximumSelectionDepth = 8
 
@@ -17,9 +19,12 @@ public struct GraphQLParser: Sendable {
     guard !source.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
       throw GatewayError.validation("The GraphQL document is empty.")
     }
-    guard source.count <= Self.maximumDocumentLength else {
+    // Measured in UTF-8 bytes, not grapheme clusters: a cluster can span
+    // hundreds of bytes, and this cap exists to bound resource use before any
+    // credential or network activity.
+    guard source.utf8.count <= Self.maximumDocumentLength else {
       throw GatewayError.validation(
-        "The GraphQL document exceeds the \(Self.maximumDocumentLength) character limit."
+        "The GraphQL document exceeds the \(Self.maximumDocumentLength) byte limit."
       )
     }
     var state = ParserState(source: source)
@@ -122,7 +127,7 @@ private struct ParserState {
         throw GatewayError.validation("Expected ':' after variable $\(variableName).")
       }
       try advance()
-      let (typeName, isRequired) = try parseTypeReference()
+      let (typeName, isRequired) = try parseTypeReference(depth: 1)
       if token == .punctuator("=") {
         throw GatewayError.validation("Default variable values are not supported by this contract.")
       }
@@ -134,10 +139,17 @@ private struct ParserState {
     return definitions
   }
 
-  private mutating func parseTypeReference() throws -> (String, Bool) {
+  private mutating func parseTypeReference(depth: Int) throws -> (String, Bool) {
+    // List types nest at most as deep as values are allowed to; an unbounded
+    // recursion here would be a caller-controlled stack overflow.
+    guard depth <= GraphQLParser.maximumValueDepth else {
+      throw GatewayError.validation(
+        "List types may nest at most \(GraphQLParser.maximumValueDepth) levels deep."
+      )
+    }
     if token == .punctuator("[") {
       try advance()
-      let (inner, innerRequired) = try parseTypeReference()
+      let (inner, innerRequired) = try parseTypeReference(depth: depth + 1)
       guard token == .punctuator("]") else {
         throw GatewayError.validation("Expected ']' to close a list type.")
       }
@@ -220,13 +232,22 @@ private struct ParserState {
       guard arguments[argumentName] == nil else {
         throw GatewayError.validation("Argument \(argumentName) is supplied more than once.")
       }
-      arguments[argumentName] = try parseValue()
+      arguments[argumentName] = try parseValue(depth: 1)
     }
     try advance()
     return arguments
   }
 
-  private mutating func parseValue() throws -> GraphQLInputValue {
+  private mutating func parseValue(depth: Int) throws -> GraphQLInputValue {
+    // Argument literals recurse through lists and input objects, so the same
+    // kind of cap that bounds selection sets bounds value nesting: without it
+    // a short document of nested brackets is a caller-controlled stack
+    // overflow rather than a clean validation error.
+    guard depth <= GraphQLParser.maximumValueDepth else {
+      throw GatewayError.validation(
+        "Argument values may nest at most \(GraphQLParser.maximumValueDepth) levels deep."
+      )
+    }
     switch token {
     case .punctuator("$"):
       try advance()
@@ -259,7 +280,7 @@ private struct ParserState {
         if token == .endOfDocument {
           throw GatewayError.validation("Unterminated list literal in the GraphQL document.")
         }
-        items.append(try parseValue())
+        items.append(try parseValue(depth: depth + 1))
       }
       try advance()
       return .list(items)
@@ -278,7 +299,7 @@ private struct ParserState {
         guard fields[key] == nil else {
           throw GatewayError.validation("Input field \(key) is supplied more than once.")
         }
-        fields[key] = try parseValue()
+        fields[key] = try parseValue(depth: depth + 1)
       }
       try advance()
       return .object(fields)

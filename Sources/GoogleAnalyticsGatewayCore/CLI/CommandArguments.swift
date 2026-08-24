@@ -195,7 +195,10 @@ public enum CommandParser {
         pretty: pretty
       )
     case "schema":
-      guard rest.isEmpty, options.isEmpty else {
+      // The global --config/--profile options are accepted (and ignored —
+      // the schema renders locally) so a caller can keep them in a shared
+      // command prefix; only the variables options are meaningless here.
+      guard rest.isEmpty, options["--variables"] == nil, options["--variables-file"] == nil else {
         throw GatewayError.validation("`graphql schema` accepts no additional arguments.")
       }
       return .graphQLSchema

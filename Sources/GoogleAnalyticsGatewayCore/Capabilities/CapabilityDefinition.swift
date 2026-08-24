@@ -92,6 +92,11 @@ public struct ResourceNamePattern: Sendable, Equatable {
   /// alter the structure of a path, a query string, or a header.
   private static func isSupportedSegment(_ segment: Substring) -> Bool {
     guard !segment.isEmpty, segment.count <= maximumSegmentLength else { return false }
+    // "." and ".." are structural under RFC 3986 remove-dot-segments
+    // normalization: they would re-route the request to a path other than the
+    // declared template, so they are rejected even though "." is otherwise an
+    // allowed identifier character.
+    guard segment != ".", segment != ".." else { return false }
     return segment.allSatisfy { character in
       character.isASCII
         && (character.isLetter || character.isNumber
@@ -387,6 +392,14 @@ public struct CapabilityDefinition: Sendable, Equatable {
     }
     if maximumPageSize != nil, !arguments.contains(where: { $0.binding == .page }) {
       problems.append("\(id) declares a maximum page size without a page argument.")
+    }
+    // A `.page` input outside a connection result would advertise a pageSize
+    // the planner then refuses; a token-only route uses a plain query-bound
+    // string argument instead.
+    if arguments.contains(where: { $0.binding == .page }) {
+      if case .connection = result {} else {
+        problems.append("\(id) takes a page argument without returning a connection.")
+      }
     }
     problems.append(contentsOf: routeProblems())
     problems.append(contentsOf: bodyProblems())

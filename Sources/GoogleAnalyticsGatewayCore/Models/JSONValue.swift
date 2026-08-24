@@ -23,9 +23,17 @@ extension JSONValue {
 
   public var intValue: Int? {
     switch self {
-    case .int(let value): return value
-    case .double(let value) where value.rounded() == value: return Int(value)
-    default: return nil
+    case .int(let value):
+      return value
+    case .double(let value)
+      where value.rounded() == value
+        && value >= -9_007_199_254_740_992 && value <= 9_007_199_254_740_992:
+      // Bounded to the double-exact integer range: `Int(_:)` traps outside
+      // `Int`'s range, and a whole double beyond 2^53 no longer identifies a
+      // single integer anyway, so both cases answer nil rather than crash.
+      return Int(value)
+    default:
+      return nil
     }
   }
 

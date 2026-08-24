@@ -56,3 +56,12 @@ stable; **Write scope**: its tier target's registry files + matching test files.
   Behavioral spot-checks: CAPABILITY_DENIED across tiers,
   validation-before-credentials, confirm-argument enforcement all correct.
   Remaining: TASK-007 adversarial review (with foundation TASK-007).
+- 2026-08-24 (second pass): GA4 Admin v1alpha extras registered — 111 fields
+  (reader 39, writer 39, admin 33 incl. access bindings with batch operations
+  and admin-tier reads). Surface now 283 fields, all cross-checked against
+  discovery. Fixed live planner defect: confirmation echo matched only
+  .string while confirms are .resourceName-typed (all deletes were
+  unexecutable); regression suite ConfirmationEchoTests added. Catalog tables:
+  107 writer mutations, 59 admin mutations, 8 admin query fields. 261 tests
+  in 24 suites green (incl. link-boundary and end-to-end CLI suites), lint 0.
+  Committed as 238aff9.

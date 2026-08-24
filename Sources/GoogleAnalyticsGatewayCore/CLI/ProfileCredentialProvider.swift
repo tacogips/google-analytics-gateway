@@ -23,7 +23,21 @@ public struct ProfileCredentialProvider: CredentialProvider {
   }
 
   public func credential() async throws -> ResolvedCredential {
-    let token = try resolver.accessToken(profile: profile, environment: environment)
+    // Resolution can block: it takes a per-store-path lock and a near-expiry
+    // refresh waits synchronously on the token endpoint. Blocking a Swift
+    // concurrency cooperative thread for that long can starve every task in
+    // the process (these targets ship as libraries), so the work runs on a
+    // GCD thread and this task merely suspends.
+    let profile = self.profile
+    let environment = self.environment
+    let resolver = self.resolver
+    let token = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<String, any Error>) in
+      DispatchQueue.global(qos: .userInitiated).async {
+        continuation.resume(with: Result {
+          try resolver.accessToken(profile: profile, environment: environment)
+        })
+      }
+    }
     let injected = !(environment[profile.accessTokenEnvironmentVariable] ?? "")
       .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     return ResolvedCredential(

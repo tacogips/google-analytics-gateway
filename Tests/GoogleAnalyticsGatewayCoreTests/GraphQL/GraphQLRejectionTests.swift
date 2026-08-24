@@ -122,7 +122,7 @@ struct GraphQLRejectionTests {
       "document larger than 64KB",
       "{ sampleDataStreams(parent: \"properties/1\") { nodes { name } } }\n"
         + String(repeating: "# padding comment line\n", count: 3_000),
-      "exceeds the \(GraphQLParser.maximumDocumentLength) character limit"
+      "exceeds the \(GraphQLParser.maximumDocumentLength) byte limit"
     )
   ]
 

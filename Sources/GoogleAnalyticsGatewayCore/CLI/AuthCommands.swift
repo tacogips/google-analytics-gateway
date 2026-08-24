@@ -93,7 +93,10 @@ public struct AuthCommands: Sendable {
       )
       let profile = resolution.profile
       let report = auth.status(profile: profile, environment: environment)
-      let tokenVariableSet = !(environment[profile.accessTokenEnvironmentVariable] ?? "").isEmpty
+      // Trimmed to match the resolver's own predicate, so doctor never
+      // reports a whitespace-only value as a usable token.
+      let tokenVariableSet = !(environment[profile.accessTokenEnvironmentVariable] ?? "")
+        .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
       var fields: [String: JSONValue] = [
         "executable": .string(role.executableName),
         "tier": .string(role.tier.rawValue),

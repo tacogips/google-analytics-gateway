@@ -92,8 +92,9 @@ swift run google-analytics-gateway-reader --help
 ```
 
 Design documents live under `design-docs/` (specs, references including the
-authoritative `field-catalog.json` of all 172 wrapped API methods, user-qa),
-implementation plans under `impl-plans/`.
+authoritative `field-catalog.json` and `field-catalog-v1alpha-extras.json` of
+all 283 wrapped API methods, user-qa), implementation plans under
+`impl-plans/`.
 
 ## Homebrew Formula
 

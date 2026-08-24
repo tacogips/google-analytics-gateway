@@ -70,7 +70,11 @@ public final class OAuthLoopbackReceiver: OAuthLoopbackReceiving, @unchecked Sen
     while Date() < deadline, rejected < Self.maximumInvalidConnections {
       let remaining = max(1, Int32(min(deadline.timeIntervalSinceNow * 1_000, Double(Int32.max))))
       var input = pollfd(fd: socketFD, events: Int16(POLLIN), revents: 0)
-      guard poll(&input, 1, remaining) > 0 else { break }
+      let ready = poll(&input, 1, remaining)
+      // A signal delivery is not a timeout; the loop re-enters with the
+      // deadline and rejection budget intact.
+      if ready < 0 && errno == EINTR { continue }
+      guard ready > 0 else { break }
       var peer = sockaddr_in()
       var length = socklen_t(MemoryLayout<sockaddr_in>.size)
       let client = withUnsafeMutablePointer(to: &peer) {
@@ -165,16 +169,33 @@ public final class OAuthLoopbackReceiver: OAuthLoopbackReceiving, @unchecked Sen
     let deadline = Date().addingTimeInterval(TimeInterval(Self.connectionTimeoutMilliseconds) / 1_000)
     var bytes = [UInt8]()
     var chunk = [UInt8](repeating: 0, count: 4_096)
+    let terminator: [UInt8] = [13, 10, 13, 10]
     while Date() < deadline {
       let remaining = max(1, Int32(min(deadline.timeIntervalSinceNow * 1_000, Double(Int32.max))))
       var input = pollfd(fd: client, events: Int16(POLLIN), revents: 0)
-      guard poll(&input, 1, remaining) > 0 else { break }
+      let ready = poll(&input, 1, remaining)
+      // A signal delivery is not a timeout: retry with the recomputed
+      // remaining budget rather than abandoning the one-shot callback.
+      if ready < 0 && errno == EINTR { continue }
+      guard ready > 0 else { break }
       let count = read(client, &chunk, chunk.count)
       guard count > 0 else {
         throw GatewayError(code: .upstreamResponseInvalid, message: "OAuth callback is invalid")
       }
       bytes.append(contentsOf: chunk.prefix(count))
-      guard bytes.count <= Self.maximumRequestBytes, let request = String(bytes: bytes, encoding: .utf8) else {
+      guard bytes.count <= Self.maximumRequestBytes else {
+        throw GatewayError(code: .upstreamResponseInvalid, message: "OAuth callback is invalid")
+      }
+      // The header terminator is located in bytes before any decoding, so a
+      // multibyte UTF-8 sequence split across two reads is accumulated rather
+      // than rejected mid-sequence.
+      guard bytes.count >= terminator.count,
+        bytes.indices.dropLast(terminator.count - 1)
+          .contains(where: { Array(bytes[$0..<($0 + terminator.count)]) == terminator })
+      else {
+        continue
+      }
+      guard let request = String(bytes: bytes, encoding: .utf8) else {
         throw GatewayError(code: .upstreamResponseInvalid, message: "OAuth callback is invalid")
       }
       if let end = request.range(of: "\r\n\r\n") {

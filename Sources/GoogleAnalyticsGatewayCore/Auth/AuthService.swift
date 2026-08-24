@@ -91,6 +91,11 @@ public struct AuthService: AuthManaging, Sendable {
       )
     }
     let client = try oauth.loadClient(path: clientPath)
+    // The token-store destination is validated (and its missing ancestors
+    // created, 0700) before the browser opens: the authorization code is
+    // single-use, so discovering an unwritable store only after the exchange
+    // would discard a grant the operator cannot recover.
+    try SecureLocalFiles.ensurePrivateParent(ofPath: storePath)
     let receiver = try makeReceiver(redirectURI)
     // 43 URL-safe characters is the shape the callback validator requires of
     // the state, and 64 sits inside the PKCE verifier's 43...128 range.
@@ -104,7 +109,13 @@ public struct AuthService: AuthManaging, Sendable {
       verifier: verifier
     )
     if noBrowser {
-      FileHandle.standardOutput.write(Data((url.absoluteString + "\n").utf8))
+      // stderr, never stdout: stdout carries the machine-readable envelope,
+      // and the URL must be visible while this call blocks on the callback.
+      // The same URL is returned in `AuthLoginOutput.authorizationURL` for
+      // library callers.
+      FileHandle.standardError.write(
+        Data(("Open this URL to authorize:\n" + url.absoluteString + "\n").utf8)
+      )
     } else if !openURL(url) {
       throw GatewayError(
         code: .internalError,
@@ -121,7 +132,11 @@ public struct AuthService: AuthManaging, Sendable {
       profile: profile
     )
     try tokenStore.write(token, path: storePath, profile: profile)
-    return AuthLoginOutput(profileId: profile.id, state: "ready", authorizationURL: nil)
+    return AuthLoginOutput(
+      profileId: profile.id,
+      state: "ready",
+      authorizationURL: noBrowser ? url.absoluteString : nil
+    )
   }
 
   public static let defaultOpenURL: @Sendable (URL) -> Bool = { url in

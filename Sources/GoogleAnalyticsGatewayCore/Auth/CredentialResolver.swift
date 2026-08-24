@@ -32,6 +32,15 @@ public struct CredentialResolver: CredentialResolving, Sendable {
   public func accessToken(profile: CredentialProfile, environment: [String: String]) throws -> String {
     if let token = environment[profile.accessTokenEnvironmentVariable]?
       .trimmingCharacters(in: .whitespacesAndNewlines), !token.isEmpty {
+      // The same shape rule the token store enforces: an interior control
+      // byte would corrupt the Authorization header it is destined for.
+      guard OAuthToken.isCredential(token) else {
+        throw GatewayError(
+          code: .authenticationFailed,
+          message: "Environment access token contains unsupported characters",
+          recoveryGuidance: "Check the value of \(profile.accessTokenEnvironmentVariable)"
+        )
+      }
       return token
     }
     guard let storePath = profile.tokenStorePath else {

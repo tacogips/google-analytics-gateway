@@ -38,7 +38,8 @@ public struct CapabilityExecutor: Sendable {
   /// needs the credential, so it runs immediately after resolution and still
   /// before transport.
   public func execute(
-    _ invocation: CapabilityInvocation
+    _ invocation: CapabilityInvocation,
+    requestID: String? = nil
   ) async throws -> JSONValue {
     let plan = try planner.plan(invocation)
     let credential = try await credentials.credential()
@@ -46,13 +47,18 @@ public struct CapabilityExecutor: Sendable {
       for: plan.definition,
       grantedScopes: credential.grantedScopes
     )
-    return try await execute(plan, credential: credential)
+    return try await execute(plan, credential: credential, requestID: requestID)
   }
 
   /// Executes an already-planned capability.
+  ///
+  /// A caller that already carries a correlation id (the GraphQL runtime's
+  /// envelope requestId) passes it in so errors and the envelope agree; a
+  /// direct SDK call omits it and one is minted here.
   public func execute(
     _ plan: CapabilityPlan,
-    credential: ResolvedCredential? = nil
+    credential: ResolvedCredential? = nil,
+    requestID: String? = nil
   ) async throws -> JSONValue {
     let resolved: ResolvedCredential
     if let credential {
@@ -60,7 +66,7 @@ public struct CapabilityExecutor: Sendable {
     } else {
       resolved = try await credentials.credential()
     }
-    let requestID = requestIDFactory()
+    let requestID = requestID ?? requestIDFactory()
     let response = try await send(plan: plan, credential: resolved, requestID: requestID)
     do {
       return try ResponseProjection.result(
@@ -198,7 +204,22 @@ public struct CapabilityExecutor: Sendable {
     var components = URLComponents(url: request.origin, resolvingAgainstBaseURL: false)
     components?.path = request.path
     if !request.queryItems.isEmpty {
-      components?.queryItems = request.queryItems.map { URLQueryItem(name: $0.name, value: $0.value) }
+      // Encoded explicitly: Foundation's default query encoding leaves "+"
+      // literal, which Google's servers decode as a space — corrupting opaque
+      // page tokens that contain "+" (standard base64 alphabet).
+      var allowed = CharacterSet.urlQueryAllowed
+      allowed.remove(charactersIn: "+&=?")
+      let encoded = request.queryItems.compactMap { item -> String? in
+        guard
+          let name = item.name.addingPercentEncoding(withAllowedCharacters: allowed),
+          let value = item.value.addingPercentEncoding(withAllowedCharacters: allowed)
+        else { return nil }
+        return "\(name)=\(value)"
+      }
+      guard encoded.count == request.queryItems.count else {
+        throw GatewayError.internalFailure("A query parameter could not be encoded.")
+      }
+      components?.percentEncodedQuery = encoded.joined(separator: "&")
     }
     guard let url = components?.url else {
       throw GatewayError.internalFailure("The capability request could not be resolved to a URL.")

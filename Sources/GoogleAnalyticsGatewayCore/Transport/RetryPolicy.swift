@@ -65,9 +65,12 @@ public struct RetryPolicy: Sendable, Equatable {
 
     let exponential = baseDelaySeconds * pow(2, Double(attempt - 1))
     let capped = min(exponential, maximumDelaySeconds)
-    // Deterministic jitter derived from the attempt index keeps retry timing
-    // reproducible in tests while still spreading concurrent clients.
-    let jitter = capped * jitterFraction * (Double(attempt % 3) / 2)
+    // Uniform random jitter: a deterministic function of the attempt index
+    // would be identical across concurrent clients and therefore spread
+    // nothing. Tests construct the policy with `jitterFraction: 0` for
+    // reproducible delays.
+    let bound = capped * jitterFraction
+    let jitter = bound > 0 ? Double.random(in: 0...bound) : 0
     return min(capped + jitter, maximumDelaySeconds)
   }
 

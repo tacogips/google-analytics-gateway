@@ -76,7 +76,11 @@ enum GTMFolderWriteCapabilities {
     pathTemplate: "/tagmanager/v2/{path}:entities",
     arguments: [
       ArgumentDefinition("path", .resourceName(GTMResourceNames.folder), .path("path"), required: true),
-      ArgumentDefinition("page", .page, .page)
+      // A plain token pass-through: the result is not a connection, and Tag
+      // Manager documents no pageSize on this method, so the `.page` input
+      // (which the planner validates against a connection's page bound) does
+      // not apply here.
+      ArgumentDefinition("pageToken", .string, .query("pageToken"))
     ],
     result: .single(GTMWriteModels.folderEntities),
     scopes: .tagManagerEditContainers,

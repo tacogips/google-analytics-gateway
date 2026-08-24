@@ -186,7 +186,10 @@ struct GraphQLLexer {
   /// so the caller's single advance moves past the escape.
   private mutating func readHexQuad() throws -> UInt32 {
     let start = index + 1
+    // Each position must itself be a hex digit: the radix initializer alone
+    // also accepts a leading sign, so "\u+041" would otherwise pass.
     guard start + 3 < characters.count,
+          characters[start...(start + 3)].allSatisfy(\.isHexDigit),
           let value = UInt32(String(characters[start...(start + 3)]), radix: 16)
     else {
       throw GatewayError.validation("Invalid unicode escape in a GraphQL string.")

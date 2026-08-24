@@ -158,7 +158,7 @@ public struct GraphQLRuntime: Sendable {
 
     for field in fields {
       do {
-        let result = try await executor.execute(field.invocation)
+        let result = try await executor.execute(field.invocation, requestID: requestID)
         data[field.responseKey] = GraphQLSelectionProjection.project(
           result,
           selections: field.selections
