@@ -1,0 +1,11 @@
+analyticsdata.properties.audienceExports.create	POST v1beta/properties/{propertiesId}/audienceExports
+analyticsdata.properties.audienceExports.get	GET v1beta/properties/{propertiesId}/audienceExports/{audienceExportsId}
+analyticsdata.properties.audienceExports.list	GET v1beta/properties/{propertiesId}/audienceExports
+analyticsdata.properties.audienceExports.query	POST v1beta/properties/{propertiesId}/audienceExports/{audienceExportsId}:query
+analyticsdata.properties.batchRunPivotReports	POST v1beta/properties/{propertiesId}:batchRunPivotReports
+analyticsdata.properties.batchRunReports	POST v1beta/properties/{propertiesId}:batchRunReports
+analyticsdata.properties.checkCompatibility	POST v1beta/properties/{propertiesId}:checkCompatibility
+analyticsdata.properties.getMetadata	GET v1beta/properties/{propertiesId}/metadata
+analyticsdata.properties.runPivotReport	POST v1beta/properties/{propertiesId}:runPivotReport
+analyticsdata.properties.runRealtimeReport	POST v1beta/properties/{propertiesId}:runRealtimeReport
+analyticsdata.properties.runReport	POST v1beta/properties/{propertiesId}:runReport
