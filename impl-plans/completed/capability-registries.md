@@ -1,6 +1,6 @@
 # Capability Registries: GA4 Admin, GA4 Data, Tag Manager, Google Tag
 
-**Status**: Pending (blocked on gateway-foundation)
+**Status**: Complete; all 283 fields registered, reviewed 2026-08-24
 **Design Reference**: `design-docs/specs/graphql-schema.md`, `design-docs/references/google-api-surfaces.md`
 **Created**: 2026-08-24
 
@@ -65,3 +65,6 @@ stable; **Write scope**: its tier target's registry files + matching test files.
   107 writer mutations, 59 admin mutations, 8 admin query fields. 261 tests
   in 24 suites green (incl. link-boundary and end-to-end CLI suites), lint 0.
   Committed as 238aff9.
+- 2026-08-24: TASK-007 covered by the foundation plan's adversarial review
+  (registry-affecting outcomes: gtmFolderEntities pageToken argument, .page
+  coherence rule). Plan closed with 283 fields registered and verified.

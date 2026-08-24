@@ -1,6 +1,6 @@
 # Gateway Foundation: Tiered Package, GraphQL Engine, OAuth, Transport
 
-**Status**: In Progress
+**Status**: Complete; adversarial review pass finished 2026-08-24
 **Design Reference**: `design-docs/specs/architecture.md`, `design-docs/specs/auth.md`, `design-docs/specs/graphql-schema.md`
 **Created**: 2026-08-24
 
@@ -102,3 +102,15 @@ stack, error taxonomy, and the shared CLI runner.
   and run (help/doctor/schema verified). CapabilityCatalog name tables filled
   from field-catalog.json. Remaining: TASK-007 (test suite in flight with the
   test-suite agent; adversarial review pending).
+- 2026-08-24: TASK-007 complete. Test suite landed (261 swift-testing tests in
+  24 suites incl. link-boundary/nm assertions and end-to-end CLI checks).
+  /code-review over Core produced 18 confirmed findings; all correctness and
+  security items fixed in commit aaa0283 (dot-segment rejection, intValue
+  trap, parser recursion caps + byte-measured size cap, /private-stripping
+  path resolution, pre-flight token-store validation, query "+" encoding,
+  requestId unification, cooperative-pool hop, env-token shape check, EINTR +
+  split-read loopback hardening, hex-escape sign rejection, random jitter,
+  page-binding coherence rule). Earlier fixes: confirm-echo defect, 409
+  mapping. Deferred cleanup: duplicated OAuth scope table
+  (CapabilityIdentity vs CredentialProfiles), intentionally unused
+  ResponseSinkDelivery download path. Plan closed.
