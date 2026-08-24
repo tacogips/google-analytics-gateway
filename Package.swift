@@ -79,6 +79,17 @@ let package = Package(
         "GoogleAnalyticsGatewayWrite", "GoogleAnalyticsGatewayAdmin",
         "GoogleAnalyticsGatewayTestSupport"
       ]
+    ),
+    // Depends on the three executable targets so `swift test` builds the real
+    // binaries, then asserts their link boundaries and end-to-end CLI behavior.
+    .testTarget(
+      name: "GoogleAnalyticsGatewayCLITests",
+      dependencies: [
+        "GoogleAnalyticsGatewayCore", "GoogleAnalyticsGatewayRead",
+        "GoogleAnalyticsGatewayWrite", "GoogleAnalyticsGatewayAdmin",
+        "GoogleAnalyticsGatewayReaderCLI", "GoogleAnalyticsGatewayWriterCLI",
+        "GoogleAnalyticsGatewayAdminCLI"
+      ]
     )
   ],
   swiftLanguageModes: [.v6]

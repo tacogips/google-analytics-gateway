@@ -209,12 +209,19 @@ struct CredentialProfileTests {
     let configuration = try CredentialProfileConfiguration.load(path: configPath)
     let profile = try configuration.profile(id: "analytics-reader")
 
-    // The contract is "relative to the configuration document", so the
-    // expectation is built from the standardized configuration directory. It is
-    // not the same string as the raw fixture path: Foundation standardizes an
-    // existing `/private/var` path back to `/var`.
-    let configDirectory = URL(fileURLWithPath: configPath).standardizedFileURL
-      .deletingLastPathComponent()
+    // The contract is "relative to the configuration document", with the
+    // config directory realpath-resolved first so the joined paths stay
+    // openable through SecureLocalFiles' O_NOFOLLOW traversal (Foundation's
+    // standardization would rewrite `/private/var` to the `/var` symlink).
+    let configDirectory = URL(
+      fileURLWithPath: URL(fileURLWithPath: configPath).deletingLastPathComponent().path
+        .withCString { pointer in
+          realpath(pointer, nil).map { resolved in
+            defer { free(resolved) }
+            return String(cString: resolved)
+          }
+        } ?? ""
+    )
     #expect(profile.oauthClientJSONPath == configDirectory.appendingPathComponent("oauth-client.json").path)
     #expect(profile.tokenStorePath == configDirectory.appendingPathComponent("token-store.json").path)
   }

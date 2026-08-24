@@ -38,25 +38,8 @@ struct CapabilityCatalogTests {
       + "catalogued but not registered: \(missingFromModule)"
   }
 
-  /// True while the tier modules are still being authored. The catalog is
-  /// populated first, so until the registrations land the two cannot agree and
-  /// the coherence assertions would report a failure that is really a
-  /// not-yet-written module.
-  static var registriesArePending: Bool {
-    WriteCapabilities.all.isEmpty && AdminCapabilities.all.isEmpty
-  }
-
   @Test("Every writer mutation the catalog names is registered by the writer module")
   func writerCatalogMatchesWriterModule() throws {
-    guard !Self.registriesArePending else {
-      #expect(
-        CapabilityCatalog.writerMutationFields.isEmpty
-          && CapabilityCatalog.adminMutationFields.isEmpty,
-        "The writer and admin registries are not populated yet, so the catalog must still be empty"
-      )
-      return
-    }
-
     let registered = Self.fields(WriteCapabilities.all, mutations: true)
     let catalogued = Set(CapabilityCatalog.writerMutationFields)
 
@@ -71,7 +54,6 @@ struct CapabilityCatalogTests {
 
   @Test("Every admin mutation the catalog names is registered by the admin module")
   func adminCatalogMatchesAdminModule() throws {
-    guard !Self.registriesArePending else { return }
 
     let registered = Self.fields(AdminCapabilities.all, mutations: true)
     let catalogued = Set(CapabilityCatalog.adminMutationFields)
@@ -85,7 +67,6 @@ struct CapabilityCatalogTests {
 
   @Test("The admin query table names exactly the admin module's reads")
   func adminQueryCatalogMatchesAdminModule() throws {
-    guard !Self.registriesArePending else { return }
 
     let registered = Self.fields(AdminCapabilities.all, mutations: false)
     let catalogued = Set(CapabilityCatalog.adminQueryFields)
@@ -95,14 +76,17 @@ struct CapabilityCatalogTests {
       "\(Self.difference(registered: registered, catalogued: catalogued))"
     )
     // An admin-tier read is unusual enough to name: these are HTTP GETs that
-    // are administrative all the same, so a reader binary must be told the tier
-    // rather than told the field does not exist.
-    #expect(registered.allSatisfy { $0.hasPrefix("gtmUserPermission") })
+    // are administrative all the same (Tag Manager user permissions and GA4
+    // access bindings), so a reader binary must be told the tier rather than
+    // told the field does not exist.
+    #expect(registered.allSatisfy {
+      $0.hasPrefix("gtmUserPermission")
+        || $0.contains("AccessBinding")
+    })
   }
 
   @Test("No reader field appears in any tier table")
   func readerFieldsAreNotCatalogued() throws {
-    guard !Self.registriesArePending else { return }
 
     let readerFields = Set(ReadCapabilities.all.map(\.field))
     #expect(!readerFields.isEmpty)
@@ -131,7 +115,6 @@ struct CapabilityCatalogTests {
 
   @Test("knownTier answers the owning tier for a catalogued field")
   func knownTierAnswersOwningTier() throws {
-    guard !Self.registriesArePending else { return }
 
     for field in CapabilityCatalog.writerMutationFields {
       #expect(CapabilityCatalog.knownTier(field: field, isMutation: true) == .writer, "\(field)")
@@ -161,7 +144,6 @@ struct CapabilityCatalogTests {
 
   @Test("A reader registry denies a catalogued mutation with the tier it needs")
   func readerPlannerDeniesCataloguedMutation() throws {
-    guard !Self.registriesArePending else { return }
     let planner = CapabilityPlanner(registry: try CapabilityRegistry(
       tier: .reader, definitions: ReadCapabilities.all
     ))
@@ -191,7 +173,6 @@ struct CapabilityCatalogTests {
 
   @Test("A writer registry serves writer mutations and still denies admin ones")
   func writerRegistryStopsAtItsOwnTier() throws {
-    guard !Self.registriesArePending else { return }
     let planner = CapabilityPlanner(registry: try CapabilityRegistry(
       tier: .writer, definitions: ReadCapabilities.all + WriteCapabilities.all
     ))
@@ -212,7 +193,6 @@ struct CapabilityCatalogTests {
 
   @Test("Each tier's composed registry builds and is internally coherent")
   func composedRegistriesAreCoherent() throws {
-    guard !Self.registriesArePending else { return }
 
     let reader = try CapabilityRegistry(tier: .reader, definitions: ReadCapabilities.all)
     let writer = try CapabilityRegistry(

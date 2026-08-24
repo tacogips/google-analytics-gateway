@@ -1,0 +1,890 @@
+[
+ {
+  "field": "gaBatchCreateAccountAccessBindings",
+  "method": "analyticsadmin.accounts.accessBindings.batchCreate",
+  "http": "POST",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings:batchCreate",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaBatchDeleteAccountAccessBindings",
+  "method": "analyticsadmin.accounts.accessBindings.batchDelete",
+  "http": "POST",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings:batchDelete",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaBatchGetAccountAccessBindings",
+  "method": "analyticsadmin.accounts.accessBindings.batchGet",
+  "http": "GET",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings:batchGet",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaBatchUpdateAccountAccessBindings",
+  "method": "analyticsadmin.accounts.accessBindings.batchUpdate",
+  "http": "POST",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings:batchUpdate",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaCreateAccountAccessBinding",
+  "method": "analyticsadmin.accounts.accessBindings.create",
+  "http": "POST",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteAccountAccessBinding",
+  "method": "analyticsadmin.accounts.accessBindings.delete",
+  "http": "DELETE",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings/{accessBindingsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaAccountAccessBinding",
+  "method": "analyticsadmin.accounts.accessBindings.get",
+  "http": "GET",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings/{accessBindingsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaAccountAccessBindings",
+  "method": "analyticsadmin.accounts.accessBindings.list",
+  "http": "GET",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaUpdateAccountAccessBinding",
+  "method": "analyticsadmin.accounts.accessBindings.patch",
+  "http": "PATCH",
+  "path": "v1alpha/accounts/{accountsId}/accessBindings/{accessBindingsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaBatchCreatePropertyAccessBindings",
+  "method": "analyticsadmin.properties.accessBindings.batchCreate",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings:batchCreate",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaBatchDeletePropertyAccessBindings",
+  "method": "analyticsadmin.properties.accessBindings.batchDelete",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings:batchDelete",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaBatchGetPropertyAccessBindings",
+  "method": "analyticsadmin.properties.accessBindings.batchGet",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings:batchGet",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaBatchUpdatePropertyAccessBindings",
+  "method": "analyticsadmin.properties.accessBindings.batchUpdate",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings:batchUpdate",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaCreatePropertyAccessBinding",
+  "method": "analyticsadmin.properties.accessBindings.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeletePropertyAccessBinding",
+  "method": "analyticsadmin.properties.accessBindings.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings/{accessBindingsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaPropertyAccessBinding",
+  "method": "analyticsadmin.properties.accessBindings.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings/{accessBindingsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaPropertyAccessBindings",
+  "method": "analyticsadmin.properties.accessBindings.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaUpdatePropertyAccessBinding",
+  "method": "analyticsadmin.properties.accessBindings.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/accessBindings/{accessBindingsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaCreateAdSenseLink",
+  "method": "analyticsadmin.properties.adSenseLinks.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/adSenseLinks",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteAdSenseLink",
+  "method": "analyticsadmin.properties.adSenseLinks.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/adSenseLinks/{adSenseLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaAdSenseLink",
+  "method": "analyticsadmin.properties.adSenseLinks.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/adSenseLinks/{adSenseLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaAdSenseLinks",
+  "method": "analyticsadmin.properties.adSenseLinks.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/adSenseLinks",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaArchiveAudience",
+  "method": "analyticsadmin.properties.audiences.archive",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/audiences/{audiencesId}:archive",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateAudience",
+  "method": "analyticsadmin.properties.audiences.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/audiences",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaAudience",
+  "method": "analyticsadmin.properties.audiences.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/audiences/{audiencesId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaAudiences",
+  "method": "analyticsadmin.properties.audiences.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/audiences",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateAudience",
+  "method": "analyticsadmin.properties.audiences.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/audiences/{audiencesId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateBigQueryLink",
+  "method": "analyticsadmin.properties.bigQueryLinks.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/bigQueryLinks",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteBigQueryLink",
+  "method": "analyticsadmin.properties.bigQueryLinks.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/bigQueryLinks/{bigQueryLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaBigQueryLink",
+  "method": "analyticsadmin.properties.bigQueryLinks.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/bigQueryLinks/{bigQueryLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaBigQueryLinks",
+  "method": "analyticsadmin.properties.bigQueryLinks.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/bigQueryLinks",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateBigQueryLink",
+  "method": "analyticsadmin.properties.bigQueryLinks.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/bigQueryLinks/{bigQueryLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateCalculatedMetric",
+  "method": "analyticsadmin.properties.calculatedMetrics.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/calculatedMetrics",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteCalculatedMetric",
+  "method": "analyticsadmin.properties.calculatedMetrics.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/calculatedMetrics/{calculatedMetricsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaCalculatedMetric",
+  "method": "analyticsadmin.properties.calculatedMetrics.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/calculatedMetrics/{calculatedMetricsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCalculatedMetrics",
+  "method": "analyticsadmin.properties.calculatedMetrics.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/calculatedMetrics",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateCalculatedMetric",
+  "method": "analyticsadmin.properties.calculatedMetrics.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/calculatedMetrics/{calculatedMetricsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateChannelGroup",
+  "method": "analyticsadmin.properties.channelGroups.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/channelGroups",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteChannelGroup",
+  "method": "analyticsadmin.properties.channelGroups.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/channelGroups/{channelGroupsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaChannelGroup",
+  "method": "analyticsadmin.properties.channelGroups.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/channelGroups/{channelGroupsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaChannelGroups",
+  "method": "analyticsadmin.properties.channelGroups.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/channelGroups",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateChannelGroup",
+  "method": "analyticsadmin.properties.channelGroups.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/channelGroups/{channelGroupsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateRollupProperty",
+  "method": "analyticsadmin.properties.createRollupProperty",
+  "http": "POST",
+  "path": "v1alpha/properties:createRollupProperty",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateEventCreateRule",
+  "method": "analyticsadmin.properties.dataStreams.eventCreateRules.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventCreateRules",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteEventCreateRule",
+  "method": "analyticsadmin.properties.dataStreams.eventCreateRules.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventCreateRules/{eventCreateRulesId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaEventCreateRule",
+  "method": "analyticsadmin.properties.dataStreams.eventCreateRules.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventCreateRules/{eventCreateRulesId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaEventCreateRules",
+  "method": "analyticsadmin.properties.dataStreams.eventCreateRules.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventCreateRules",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateEventCreateRule",
+  "method": "analyticsadmin.properties.dataStreams.eventCreateRules.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventCreateRules/{eventCreateRulesId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateEventEditRule",
+  "method": "analyticsadmin.properties.dataStreams.eventEditRules.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventEditRules",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteEventEditRule",
+  "method": "analyticsadmin.properties.dataStreams.eventEditRules.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventEditRules/{eventEditRulesId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaEventEditRule",
+  "method": "analyticsadmin.properties.dataStreams.eventEditRules.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventEditRules/{eventEditRulesId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaEventEditRules",
+  "method": "analyticsadmin.properties.dataStreams.eventEditRules.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventEditRules",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateEventEditRule",
+  "method": "analyticsadmin.properties.dataStreams.eventEditRules.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventEditRules/{eventEditRulesId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaReorderEventEditRules",
+  "method": "analyticsadmin.properties.dataStreams.eventEditRules.reorder",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/eventEditRules:reorder",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaStreamDataRedactionSettings",
+  "method": "analyticsadmin.properties.dataStreams.getDataRedactionSettings",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/dataRedactionSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaEnhancedMeasurementSettings",
+  "method": "analyticsadmin.properties.dataStreams.getEnhancedMeasurementSettings",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/enhancedMeasurementSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaGlobalSiteTag",
+  "method": "analyticsadmin.properties.dataStreams.getGlobalSiteTag",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/globalSiteTag",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCreateSKAdNetworkConversionValueSchema",
+  "method": "analyticsadmin.properties.dataStreams.sKAdNetworkConversionValueSchema.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/sKAdNetworkConversionValueSchema",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteSKAdNetworkConversionValueSchema",
+  "method": "analyticsadmin.properties.dataStreams.sKAdNetworkConversionValueSchema.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/sKAdNetworkConversionValueSchema/{sKAdNetworkConversionValueSchemaId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaSKAdNetworkConversionValueSchema",
+  "method": "analyticsadmin.properties.dataStreams.sKAdNetworkConversionValueSchema.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/sKAdNetworkConversionValueSchema/{sKAdNetworkConversionValueSchemaId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaSKAdNetworkConversionValueSchemas",
+  "method": "analyticsadmin.properties.dataStreams.sKAdNetworkConversionValueSchema.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/sKAdNetworkConversionValueSchema",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateSKAdNetworkConversionValueSchema",
+  "method": "analyticsadmin.properties.dataStreams.sKAdNetworkConversionValueSchema.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/sKAdNetworkConversionValueSchema/{sKAdNetworkConversionValueSchemaId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateStreamDataRedactionSettings",
+  "method": "analyticsadmin.properties.dataStreams.updateDataRedactionSettings",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/dataRedactionSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateEnhancedMeasurementSettings",
+  "method": "analyticsadmin.properties.dataStreams.updateEnhancedMeasurementSettings",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/dataStreams/{dataStreamsId}/enhancedMeasurementSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaApproveDisplayVideo360AdvertiserLinkProposal",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinkProposals.approve",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinkProposals/{displayVideo360AdvertiserLinkProposalsId}:approve",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCancelDisplayVideo360AdvertiserLinkProposal",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinkProposals.cancel",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinkProposals/{displayVideo360AdvertiserLinkProposalsId}:cancel",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateDisplayVideo360AdvertiserLinkProposal",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinkProposals.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinkProposals",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteDisplayVideo360AdvertiserLinkProposal",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinkProposals.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinkProposals/{displayVideo360AdvertiserLinkProposalsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDisplayVideo360AdvertiserLinkProposal",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinkProposals.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinkProposals/{displayVideo360AdvertiserLinkProposalsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaDisplayVideo360AdvertiserLinkProposals",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinkProposals.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinkProposals",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCreateDisplayVideo360AdvertiserLink",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinks.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinks",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteDisplayVideo360AdvertiserLink",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinks.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinks/{displayVideo360AdvertiserLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDisplayVideo360AdvertiserLink",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinks.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinks/{displayVideo360AdvertiserLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaDisplayVideo360AdvertiserLinks",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinks.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinks",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateDisplayVideo360AdvertiserLink",
+  "method": "analyticsadmin.properties.displayVideo360AdvertiserLinks.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/displayVideo360AdvertiserLinks/{displayVideo360AdvertiserLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateExpandedDataSet",
+  "method": "analyticsadmin.properties.expandedDataSets.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/expandedDataSets",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteExpandedDataSet",
+  "method": "analyticsadmin.properties.expandedDataSets.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/expandedDataSets/{expandedDataSetsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaExpandedDataSet",
+  "method": "analyticsadmin.properties.expandedDataSets.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/expandedDataSets/{expandedDataSetsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaExpandedDataSets",
+  "method": "analyticsadmin.properties.expandedDataSets.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/expandedDataSets",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateExpandedDataSet",
+  "method": "analyticsadmin.properties.expandedDataSets.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/expandedDataSets/{expandedDataSetsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaAttributionSettings",
+  "method": "analyticsadmin.properties.getAttributionSettings",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/attributionSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaGoogleSignalsSettings",
+  "method": "analyticsadmin.properties.getGoogleSignalsSettings",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/googleSignalsSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaReportingIdentitySettings",
+  "method": "analyticsadmin.properties.getReportingIdentitySettings",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/reportingIdentitySettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaGetUserProvidedDataSettings",
+  "method": "analyticsadmin.properties.getUserProvidedDataSettings",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/userProvidedDataSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaProvisionSubproperty",
+  "method": "analyticsadmin.properties.provisionSubproperty",
+  "http": "POST",
+  "path": "v1alpha/properties:provisionSubproperty",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateReportingDataAnnotation",
+  "method": "analyticsadmin.properties.reportingDataAnnotations.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/reportingDataAnnotations",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteReportingDataAnnotation",
+  "method": "analyticsadmin.properties.reportingDataAnnotations.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/reportingDataAnnotations/{reportingDataAnnotationsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaReportingDataAnnotation",
+  "method": "analyticsadmin.properties.reportingDataAnnotations.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/reportingDataAnnotations/{reportingDataAnnotationsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaReportingDataAnnotations",
+  "method": "analyticsadmin.properties.reportingDataAnnotations.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/reportingDataAnnotations",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateReportingDataAnnotation",
+  "method": "analyticsadmin.properties.reportingDataAnnotations.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/reportingDataAnnotations/{reportingDataAnnotationsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateRollupPropertySourceLink",
+  "method": "analyticsadmin.properties.rollupPropertySourceLinks.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/rollupPropertySourceLinks",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteRollupPropertySourceLink",
+  "method": "analyticsadmin.properties.rollupPropertySourceLinks.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/rollupPropertySourceLinks/{rollupPropertySourceLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaRollupPropertySourceLink",
+  "method": "analyticsadmin.properties.rollupPropertySourceLinks.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/rollupPropertySourceLinks/{rollupPropertySourceLinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaRollupPropertySourceLinks",
+  "method": "analyticsadmin.properties.rollupPropertySourceLinks.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/rollupPropertySourceLinks",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCreateSearchAds360Link",
+  "method": "analyticsadmin.properties.searchAds360Links.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/searchAds360Links",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteSearchAds360Link",
+  "method": "analyticsadmin.properties.searchAds360Links.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/searchAds360Links/{searchAds360LinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaSearchAds360Link",
+  "method": "analyticsadmin.properties.searchAds360Links.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/searchAds360Links/{searchAds360LinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaSearchAds360Links",
+  "method": "analyticsadmin.properties.searchAds360Links.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/searchAds360Links",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateSearchAds360Link",
+  "method": "analyticsadmin.properties.searchAds360Links.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/searchAds360Links/{searchAds360LinksId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaSubmitUserDeletion",
+  "method": "analyticsadmin.properties.submitUserDeletion",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}:submitUserDeletion",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaCreateSubpropertyEventFilter",
+  "method": "analyticsadmin.properties.subpropertyEventFilters.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/subpropertyEventFilters",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaDeleteSubpropertyEventFilter",
+  "method": "analyticsadmin.properties.subpropertyEventFilters.delete",
+  "http": "DELETE",
+  "path": "v1alpha/properties/{propertiesId}/subpropertyEventFilters/{subpropertyEventFiltersId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "admin"
+ },
+ {
+  "field": "gaSubpropertyEventFilter",
+  "method": "analyticsadmin.properties.subpropertyEventFilters.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/subpropertyEventFilters/{subpropertyEventFiltersId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaSubpropertyEventFilters",
+  "method": "analyticsadmin.properties.subpropertyEventFilters.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/subpropertyEventFilters",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateSubpropertyEventFilter",
+  "method": "analyticsadmin.properties.subpropertyEventFilters.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/subpropertyEventFilters/{subpropertyEventFiltersId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaSubpropertySyncConfig",
+  "method": "analyticsadmin.properties.subpropertySyncConfigs.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/subpropertySyncConfigs/{subpropertySyncConfigsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaSubpropertySyncConfigs",
+  "method": "analyticsadmin.properties.subpropertySyncConfigs.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/subpropertySyncConfigs",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaUpdateSubpropertySyncConfig",
+  "method": "analyticsadmin.properties.subpropertySyncConfigs.patch",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/subpropertySyncConfigs/{subpropertySyncConfigsId}",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateAttributionSettings",
+  "method": "analyticsadmin.properties.updateAttributionSettings",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/attributionSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateGoogleSignalsSettings",
+  "method": "analyticsadmin.properties.updateGoogleSignalsSettings",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/googleSignalsSettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateReportingIdentitySettings",
+  "method": "analyticsadmin.properties.updateReportingIdentitySettings",
+  "http": "PATCH",
+  "path": "v1alpha/properties/{propertiesId}/reportingIdentitySettings",
+  "service": "analyticsAdminV1Alpha",
+  "tier": "writer"
+ }
+]

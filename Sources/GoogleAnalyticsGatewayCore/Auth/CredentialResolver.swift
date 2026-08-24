@@ -158,7 +158,9 @@ public struct AuthStatus: Encodable, Equatable, Sendable {
   public let expiresAt: Date?
   public let hasRefreshToken: Bool
 
-  init(
+  /// Public so external `AuthManaging` conformances (library callers and test
+  /// doubles) can construct the value their `status` implementation returns.
+  public init(
     profile: CredentialProfile,
     environmentTokenAvailable: Bool,
     tokenStoreExists: Bool,

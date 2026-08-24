@@ -208,7 +208,16 @@ enum RequestBuilder {
   ) throws {
     for parameter in definition.arguments {
       guard let targetName = parameter.binding.confirmedArgumentName else { continue }
-      guard case .string(let echoed)? = arguments[parameter.name] else {
+      // Confirm arguments are typed `.resourceName` so the echo passes the
+      // same pattern validation as the target; a plain `.string` echo is also
+      // accepted for the rare confirm whose target is not a resource name.
+      let echoed: String
+      switch arguments[parameter.name] {
+      case .resourceName(let value)?:
+        echoed = value
+      case .string(let value)?:
+        echoed = value
+      default:
         throw GatewayError.validation(
           "Argument \(parameter.name) is required for field \(definition.field).",
           recovery: "Repeat the \(targetName) value exactly to confirm the operation."

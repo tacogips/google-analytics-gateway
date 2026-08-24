@@ -59,7 +59,7 @@ description = "Run SwiftLint"
 run = "swiftlint"
 
 [tasks."build:homebrew"]
-description = "Build Homebrew formula archives"
+description = "Build Homebrew formula archives for every executable"
 run = "scripts/build-homebrew-release.sh"
 
 [tasks."homebrew:formula"]
@@ -67,13 +67,13 @@ description = "Render the Homebrew formula"
 run = "scripts/render-homebrew-formula.sh"
 
 [tasks."homebrew:tap-formula"]
-description = "Render the formula into the default sibling tap"
+description = "Render one formula per executable into the default sibling tap"
 run = '''
 if [ "$#" -eq 0 ]; then
   echo "usage: mise run homebrew:tap-formula -- <version>" >&2
   exit 2
 fi
-scripts/render-homebrew-formula.sh "$1" "../homebrew-tap/Formula/google-analytics-gateway.rb"
+scripts/render-homebrew-formula.sh "$1" "../homebrew-tap/Formula"
 '''
 
 [tasks."build:homebrew-cask"]

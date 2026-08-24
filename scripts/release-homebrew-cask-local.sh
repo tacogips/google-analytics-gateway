@@ -3,16 +3,19 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
-artifact_name="google-analytics-gateway"
-github_repository="user/repo"
+source "$script_dir/homebrew-release-common.sh"
 
 usage() {
   cat <<EOF
 Usage:
   scripts/release-homebrew-cask-local.sh v<version> [tap-cask-file]
 
+Builds one DMG per target containing every executable, uploads them to the
+GitHub release, and renders the single cask that installs all of them:
+  $(homebrew_product_list)
+
 Required local environment variables:
-  APPLE_SIGNING_IDENTITY  Developer ID Application identity for the executable.
+  APPLE_SIGNING_IDENTITY  Developer ID Application identity for the executables.
   APPLE_ID                Apple ID email for notarization.
   APPLE_PASSWORD          Apple app-specific password for notarization.
   APPLE_TEAM_ID           Apple Developer Team ID for notarization.
@@ -36,7 +39,7 @@ if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
 fi
 
 release_tag="${1:-}"
-tap_cask_file="${2:-$repo_root/../homebrew-tap/Casks/$artifact_name.rb}"
+tap_cask_file="${2:-$repo_root/../homebrew-tap/Casks/$homebrew_cask_name.rb}"
 if [[ -z "$release_tag" ]]; then
   usage >&2
   exit 1
@@ -60,6 +63,7 @@ require_command git
 require_command shasum
 
 version="${release_tag#v}"
+validate_homebrew_version "$version"
 if [[ "$(tr -d '[:space:]' < "$repo_root/VERSION")" != "$version" ]]; then
   printf 'error: VERSION does not match release tag %s\n' "$release_tag" >&2
   exit 1
@@ -80,25 +84,25 @@ fi
 scripts/build-homebrew-cask-release.sh darwin-arm64 darwin-x64
 
 release_dir="${CASK_RELEASE_DIR:-$repo_root/dist/homebrew-cask}"
-arm_dmg="$release_dir/$artifact_name-$version-darwin-arm64.dmg"
-x64_dmg="$release_dir/$artifact_name-$version-darwin-x64.dmg"
+arm_dmg="$release_dir/$homebrew_cask_name-$version-darwin-arm64.dmg"
+x64_dmg="$release_dir/$homebrew_cask_name-$version-darwin-x64.dmg"
 test -f "$arm_dmg"
 test -f "$x64_dmg"
 
 release_notes="Signed, notarized, and stapled macOS DMG archives for the Homebrew Cask release."
-if ! gh release view "$release_tag" --repo "$github_repository" >/dev/null 2>&1; then
+if ! gh release view "$release_tag" --repo "$homebrew_github_repository" >/dev/null 2>&1; then
   gh release create "$release_tag" \
-    --repo "$github_repository" \
+    --repo "$homebrew_github_repository" \
     --title "google-analytics-gateway $release_tag" \
     --notes "$release_notes"
 fi
 
-gh release upload "$release_tag" "$arm_dmg" "$x64_dmg" --repo "$github_repository" --clobber
+gh release upload "$release_tag" "$arm_dmg" "$x64_dmg" --repo "$homebrew_github_repository" --clobber
 
 scripts/render-homebrew-cask.sh "$version" "$tap_cask_file"
 
 printf '\nRendered tap cask: %s\n' "$tap_cask_file"
 printf 'Review, commit, and push the tap change from the tap repository.\n'
 printf 'Then install with:\n'
-printf '  brew tap user/tap\n'
-printf '  brew install --cask google-analytics-gateway\n'
+printf '  brew tap tacogips/tap\n'
+printf '  brew install --cask %s\n' "$homebrew_cask_name"

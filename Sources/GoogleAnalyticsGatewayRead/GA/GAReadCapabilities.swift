@@ -10,4 +10,5 @@ public enum GAReadCapabilities {
     + GALinkCapabilities.all
     + GAReportCapabilities.all
     + GAAudienceExportCapabilities.all
+    + GAAlphaReadCapabilities.all
 }

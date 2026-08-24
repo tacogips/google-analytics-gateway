@@ -10,4 +10,5 @@ public enum GAWriteCapabilities {
     + GADefinitionWriteCapabilities.all
     + GALinkWriteCapabilities.all
     + GAAudienceExportWriteCapabilities.all
+    + GAAlphaWriteCapabilities.all
 }

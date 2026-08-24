@@ -3,8 +3,7 @@ set -euo pipefail
 
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 repo_root="$(cd "$script_dir/.." && pwd)"
-product="google-analytics-gateway"
-artifact_name="google-analytics-gateway"
+source "$script_dir/homebrew-release-common.sh"
 
 usage() {
   cat <<EOF
@@ -14,8 +13,14 @@ Usage:
 Targets:
   darwin-arm64  darwin-x64
 
+Bundled products:
+  $(homebrew_product_list)
+
+Every product ships in the same DMG, so the cask installs the whole capability
+set as one unit. Products are not individually selectable here.
+
 Required environment for real builds:
-  APPLE_SIGNING_IDENTITY  Developer ID Application identity for the executable.
+  APPLE_SIGNING_IDENTITY  Developer ID Application identity for the executables.
   APPLE_ID                Apple ID email for notarization.
   APPLE_PASSWORD          Apple app-specific password for notarization.
   APPLE_TEAM_ID           Apple Developer Team ID for notarization.
@@ -78,17 +83,6 @@ validate_target() {
       return 1
       ;;
   esac
-}
-
-validate_version() {
-  local version
-  version="$1"
-
-  if [[ "$version" == *..* || ! "$version" =~ ^[0-9]+[.][0-9]+[.][0-9]+([-+][0-9A-Za-z][0-9A-Za-z.+-]*)?$ ]]; then
-    printf 'unsafe cask version: %s\n' "$version" >&2
-    printf 'expected archive-safe semver-like value without path separators or parent traversal\n' >&2
-    return 1
-  fi
 }
 
 absolute_path() {
@@ -184,8 +178,9 @@ swift_bin() {
 }
 
 swift_release_bin_path() {
-  local target swift_exe developer_dir sdkroot triple
-  target="$1"
+  local product target swift_exe developer_dir sdkroot triple
+  product="$1"
+  target="$2"
   swift_exe="$(swift_bin)"
   developer_dir="${SWIFT_DEVELOPER_DIR:-/Applications/Xcode.app/Contents/Developer}"
   sdkroot="${SWIFT_SDKROOT:-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk}"
@@ -207,13 +202,12 @@ assert_codesigning_identity() {
 }
 
 print_plan() {
-  local version target release_dir work_dir dmg_path staged_binary triple install_prefix
+  local version target release_dir work_dir dmg_path triple install_prefix product
   version="$1"
   target="$2"
   release_dir="$3"
-  work_dir="$release_dir/work/$artifact_name-$version-$target"
-  dmg_path="$release_dir/$artifact_name-$version-$target.dmg"
-  staged_binary="$work_dir/$product"
+  work_dir="$release_dir/work/$homebrew_cask_name-$version-$target"
+  dmg_path="$release_dir/$homebrew_cask_name-$version-$target.dmg"
   triple="$(swift_triple_for_target "$target")"
   install_prefix="$(install_prefix_for_target "$target")"
 
@@ -221,11 +215,15 @@ print_plan() {
   assert_child_path "$release_dir" "$dmg_path"
 
   printf 'Swift Homebrew Cask DMG plan\n'
-  printf '  product: %s\n' "$product"
+  printf '  cask: %s\n' "$homebrew_cask_name"
+  printf '  products: %s\n' "$(homebrew_product_list)"
   printf '  target: %s\n' "$target"
   printf '  swift triple: %s\n' "$triple"
   printf '  cask install prefix: %s\n' "$install_prefix"
-  printf '  staged signed binary: %s\n' "$staged_binary"
+  for product in "${homebrew_products[@]}"; do
+    assert_child_path "$release_dir" "$work_dir/$product"
+    printf '  staged signed binary: %s\n' "$work_dir/$product"
+  done
   printf '  notarized DMG: %s\n' "$dmg_path"
   printf '  checksum: %s.sha256\n' "$dmg_path"
   printf '  required Apple env: APPLE_SIGNING_IDENTITY, APPLE_ID, APPLE_PASSWORD, APPLE_TEAM_ID\n'
@@ -233,13 +231,12 @@ print_plan() {
 }
 
 build_target() {
-  local version target release_dir work_dir dmg_path staged_binary bin_path notarytool stapler
+  local version target release_dir work_dir dmg_path staged_binary bin_path notarytool stapler product
   version="$1"
   target="$2"
   release_dir="$3"
-  work_dir="$release_dir/work/$artifact_name-$version-$target"
-  dmg_path="$release_dir/$artifact_name-$version-$target.dmg"
-  staged_binary="$work_dir/$product"
+  work_dir="$release_dir/work/$homebrew_cask_name-$version-$target"
+  dmg_path="$release_dir/$homebrew_cask_name-$version-$target.dmg"
   notarytool="${NOTARYTOOL:-/Applications/Xcode.app/Contents/Developer/usr/bin/notarytool}"
   stapler="${STAPLER:-/Applications/Xcode.app/Contents/Developer/usr/bin/stapler}"
 
@@ -261,14 +258,19 @@ build_target() {
   rm -rf "$work_dir" "$dmg_path" "$dmg_path.sha256"
   mkdir -p "$work_dir"
 
-  bin_path="$(swift_release_bin_path "$target" | tail -n 1)"
-  cp "$bin_path/$product" "$staged_binary"
-  chmod 0755 "$staged_binary"
+  for product in "${homebrew_products[@]}"; do
+    staged_binary="$work_dir/$product"
+    assert_child_path "$release_dir" "$staged_binary"
 
-  codesign --force --options runtime --timestamp --sign "$APPLE_SIGNING_IDENTITY" "$staged_binary"
-  codesign --verify --strict --verbose=2 "$staged_binary"
+    bin_path="$(swift_release_bin_path "$product" "$target" | tail -n 1)"
+    cp "$bin_path/$product" "$staged_binary"
+    chmod 0755 "$staged_binary"
 
-  hdiutil create -quiet -fs HFS+ -format UDZO -volname "$product" -srcfolder "$work_dir" "$dmg_path"
+    codesign --force --options runtime --timestamp --sign "$APPLE_SIGNING_IDENTITY" "$staged_binary"
+    codesign --verify --strict --verbose=2 "$staged_binary"
+  done
+
+  hdiutil create -quiet -fs HFS+ -format UDZO -volname "$homebrew_cask_name" -srcfolder "$work_dir" "$dmg_path"
   codesign --force --timestamp --sign "$APPLE_SIGNING_IDENTITY" "$dmg_path"
   codesign --verify --strict --verbose=2 "$dmg_path"
   "$notarytool" submit "$dmg_path" \
@@ -306,7 +308,7 @@ main() {
 
   local version release_dir
   version="$(package_version)"
-  validate_version "$version"
+  validate_homebrew_version "$version"
   release_dir="$(absolute_path "${CASK_RELEASE_DIR:-dist/homebrew-cask}")"
   validate_release_dir "$release_dir"
 

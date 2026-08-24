@@ -1,47 +1,85 @@
 # Homebrew Packaging
 
+The package builds three executables, one per capability tier:
+
+| Executable | Formula class | Tier |
+|---|---|---|
+| `google-analytics-gateway-reader` | `GoogleAnalyticsGatewayReader` | read |
+| `google-analytics-gateway-writer` | `GoogleAnalyticsGatewayWriter` | write |
+| `google-analytics-gateway-admin` | `GoogleAnalyticsGatewayAdmin` | admin |
+
+`scripts/homebrew-release-common.sh` is the single registry of those product
+names, formula class names, and formula descriptions. Every release script
+sources it, so adding or renaming an executable is a one-file change.
+
 This project ships two Homebrew release paths:
 
-- Formula: unsigned tarballs containing `bin/google-analytics-gateway`.
-- Cask: signed, notarized, and stapled macOS DMGs containing the command line tool.
+- Formula: one unsigned tarball and one formula per executable, so a user can
+  install only the capability tier they need.
+- Cask: one signed, notarized, and stapled macOS DMG per architecture that
+  carries all three executables, installed together by a single cask.
 
 Swift formula archives are macOS-only by default. Add Linux archives only after
 the project has a reviewed Swift Linux build and runtime contract.
 
 ## Formula
 
-Build release archives:
+Build release archives for every product:
 
 ```bash
 scripts/build-homebrew-release.sh darwin-arm64 darwin-x64
 ```
 
-The command writes archives and checksums under `dist/homebrew/`:
+Pass product names to build a subset. Products and targets can be given in any
+order:
+
+```bash
+scripts/build-homebrew-release.sh google-analytics-gateway-reader darwin-arm64 darwin-x64
+```
+
+The command writes an archive and checksum per product and target under
+`dist/homebrew/`:
 
 ```text
-dist/homebrew/google-analytics-gateway-<version>-darwin-arm64.tar.gz
-dist/homebrew/google-analytics-gateway-<version>-darwin-arm64.tar.gz.sha256
-dist/homebrew/google-analytics-gateway-<version>-darwin-x64.tar.gz
-dist/homebrew/google-analytics-gateway-<version>-darwin-x64.tar.gz.sha256
+dist/homebrew/google-analytics-gateway-reader-<version>-darwin-arm64.tar.gz
+dist/homebrew/google-analytics-gateway-reader-<version>-darwin-arm64.tar.gz.sha256
+dist/homebrew/google-analytics-gateway-reader-<version>-darwin-x64.tar.gz
+dist/homebrew/google-analytics-gateway-reader-<version>-darwin-x64.tar.gz.sha256
+dist/homebrew/google-analytics-gateway-writer-<version>-darwin-arm64.tar.gz
+dist/homebrew/google-analytics-gateway-writer-<version>-darwin-arm64.tar.gz.sha256
+dist/homebrew/google-analytics-gateway-writer-<version>-darwin-x64.tar.gz
+dist/homebrew/google-analytics-gateway-writer-<version>-darwin-x64.tar.gz.sha256
+dist/homebrew/google-analytics-gateway-admin-<version>-darwin-arm64.tar.gz
+dist/homebrew/google-analytics-gateway-admin-<version>-darwin-arm64.tar.gz.sha256
+dist/homebrew/google-analytics-gateway-admin-<version>-darwin-x64.tar.gz
+dist/homebrew/google-analytics-gateway-admin-<version>-darwin-x64.tar.gz.sha256
 ```
 
 Publish those assets to the GitHub release named `v<version>`, then render the
-formula into a tap checkout:
+formulae into a tap checkout. The renderer takes an output *directory* and
+writes `<product>.rb` into it:
 
 ```bash
-scripts/render-homebrew-formula.sh <version> ../homebrew-tap/Formula/google-analytics-gateway.rb
+scripts/render-homebrew-formula.sh <version> ../homebrew-tap/Formula
+```
+
+Render a single product's formula by naming it before the output directory:
+
+```bash
+scripts/render-homebrew-formula.sh <version> google-analytics-gateway-reader ../homebrew-tap/Formula
 ```
 
 ## Cask
 
-Build signed and notarized DMGs on macOS:
+The cask ships every executable in one DMG, so the cask builder has no product
+argument. Build signed and notarized DMGs on macOS:
 
 ```bash
 kinko exec --env APPLE_SIGNING_IDENTITY,APPLE_ID,APPLE_PASSWORD,APPLE_TEAM_ID -- \
   scripts/build-homebrew-cask-release.sh darwin-arm64 darwin-x64
 ```
 
-This writes:
+Each DMG contains all three signed binaries. This writes:
 
 ```text
 dist/homebrew-cask/google-analytics-gateway-<version>-darwin-arm64.dmg
@@ -50,7 +88,7 @@ dist/homebrew-cask/google-analytics-gateway-<version>-darwin-x64.dmg
 dist/homebrew-cask/google-analytics-gateway-<version>-darwin-x64.dmg.sha256
 ```
 
-Render the Cask:
+Render the Cask, which declares one `binary` stanza per executable:
 
 ```bash
 scripts/render-homebrew-cask.sh <version> ../homebrew-tap/Casks/google-analytics-gateway.rb
@@ -69,10 +107,14 @@ kinko exec --env APPLE_SIGNING_IDENTITY,APPLE_ID,APPLE_PASSWORD,APPLE_TEAM_ID --
 From the tap checkout:
 
 ```bash
-ruby -c Formula/google-analytics-gateway.rb
-brew audit --strict google-analytics-gateway || brew audit --strict --formula google-analytics-gateway
-brew fetch --cask user/tap/google-analytics-gateway
-HOMEBREW_NO_GITHUB_API=1 brew audit --cask user/tap/google-analytics-gateway
+for product in google-analytics-gateway-reader google-analytics-gateway-writer google-analytics-gateway-admin; do
+  ruby -c "Formula/$product.rb"
+  brew audit --strict "$product" || brew audit --strict --formula "$product"
+done
+
+ruby -c Casks/google-analytics-gateway.rb
+brew fetch --cask tacogips/tap/google-analytics-gateway
+HOMEBREW_NO_GITHUB_API=1 brew audit --cask tacogips/tap/google-analytics-gateway
 ```
 
 If online audit fails due local GitHub credentials or rate limits, run the

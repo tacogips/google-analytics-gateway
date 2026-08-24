@@ -106,9 +106,21 @@ public struct CredentialProfileConfiguration: Codable, Equatable, Sendable {
       throw GatewayError(code: .validationError, message: "Credential profile config path is invalid")
     }
     let configURL = URL(fileURLWithPath: path).standardizedFileURL
+    // The config directory is realpath-resolved before profile-relative paths
+    // join it. `standardizedFileURL` rewrites `/private/var/...` to `/var/...`,
+    // and SecureLocalFiles walks components with O_NOFOLLOW, so a path routed
+    // through macOS's `/var` symlink would be unopenable; realpath restores the
+    // symlink-free form the file layer accepts.
+    let configDirectory = configURL.deletingLastPathComponent()
+    let resolvedDirectory = configDirectory.path.withCString { pointer in
+      realpath(pointer, nil).map { resolved in
+        defer { free(resolved) }
+        return URL(fileURLWithPath: String(cString: resolved), isDirectory: true)
+      }
+    } ?? configDirectory
     do {
       return try decode(Data(contentsOf: configURL)).resolvingPaths(
-        relativeTo: configURL.deletingLastPathComponent(),
+        relativeTo: resolvedDirectory,
         configURL: configURL
       )
     } catch let error as GatewayError {
