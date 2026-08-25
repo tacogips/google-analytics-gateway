@@ -1,7 +1,8 @@
 import GoogleAnalyticsGatewayCore
 import GoogleAnalyticsGatewayRead
 
-/// GA4 Admin API v1alpha writer capabilities (see
+/// GA4 v1alpha writer capabilities — the Admin API's alpha mutations plus the
+/// Data API's audience list and report task creates (see
 /// design-docs/references/field-catalog-v1alpha-extras.json).
 ///
 /// They are separated from `GAWriteCapabilities` for the same reason
@@ -16,4 +17,5 @@ public enum GAAlphaWriteCapabilities {
     + GAAlphaLinkWriteCapabilities.all
     + GAAlphaDataStreamWriteCapabilities.all
     + GAAlphaPropertyWriteCapabilities.all
+    + GAAlphaDataWriteCapabilities.all
 }

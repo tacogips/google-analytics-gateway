@@ -19,6 +19,9 @@ public enum GoogleAPIService: String, Sendable, Equatable, Hashable, CaseIterabl
   /// GA4 Data API v1beta: the report, realtime, metadata, and compatibility
   /// methods, plus audience exports.
   case analyticsDataV1Beta = "analyticsdata.v1beta"
+  /// GA4 Data API v1alpha: funnel reports, report tasks, audience lists, and the
+  /// property quota snapshot, none of which have reached v1beta.
+  case analyticsDataV1Alpha = "analyticsdata.v1alpha"
   /// Tag Manager API v2, including the Google tag configuration and destination
   /// resources that stand in for a standalone gtag API.
   case tagManagerV2 = "tagmanager.v2"
@@ -30,7 +33,7 @@ public enum GoogleAPIService: String, Sendable, Equatable, Hashable, CaseIterabl
     switch self {
     case .analyticsAdminV1Beta, .analyticsAdminV1Alpha:
       return "analyticsadmin.googleapis.com"
-    case .analyticsDataV1Beta:
+    case .analyticsDataV1Beta, .analyticsDataV1Alpha:
       return "analyticsdata.googleapis.com"
     case .tagManagerV2:
       return "tagmanager.googleapis.com"
@@ -48,7 +51,7 @@ public enum GoogleAPIService: String, Sendable, Equatable, Hashable, CaseIterabl
     switch self {
     case .analyticsAdminV1Beta, .analyticsDataV1Beta:
       return "/v1beta"
-    case .analyticsAdminV1Alpha:
+    case .analyticsAdminV1Alpha, .analyticsDataV1Alpha:
       return "/v1alpha"
     case .tagManagerV2:
       return "/tagmanager/v2"
@@ -73,6 +76,7 @@ public enum GoogleAPIService: String, Sendable, Equatable, Hashable, CaseIterabl
     case .analyticsAdminV1Beta: return "GA4 Admin API v1beta"
     case .analyticsAdminV1Alpha: return "GA4 Admin API v1alpha"
     case .analyticsDataV1Beta: return "GA4 Data API v1beta"
+    case .analyticsDataV1Alpha: return "GA4 Data API v1alpha"
     case .tagManagerV2: return "Tag Manager API v2"
     }
   }

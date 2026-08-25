@@ -886,5 +886,109 @@
   "path": "v1alpha/properties/{propertiesId}/reportingIdentitySettings",
   "service": "analyticsAdminV1Alpha",
   "tier": "writer"
+ },
+ {
+  "field": "gaRunFunnelReport",
+  "method": "analyticsdata.properties.runFunnelReport",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}:runFunnelReport",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaPropertyQuotasSnapshot",
+  "method": "analyticsdata.properties.getPropertyQuotasSnapshot",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/propertyQuotasSnapshot",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaAudienceList",
+  "method": "analyticsdata.properties.audienceLists.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/audienceLists/{audienceListsId}",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaAudienceLists",
+  "method": "analyticsdata.properties.audienceLists.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/audienceLists",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaQueryAudienceList",
+  "method": "analyticsdata.properties.audienceLists.query",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/audienceLists/{audienceListsId}:query",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCreateAudienceList",
+  "method": "analyticsdata.properties.audienceLists.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/audienceLists",
+  "service": "analyticsDataV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaRecurringAudienceList",
+  "method": "analyticsdata.properties.recurringAudienceLists.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/recurringAudienceLists/{recurringAudienceListsId}",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaRecurringAudienceLists",
+  "method": "analyticsdata.properties.recurringAudienceLists.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/recurringAudienceLists",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCreateRecurringAudienceList",
+  "method": "analyticsdata.properties.recurringAudienceLists.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/recurringAudienceLists",
+  "service": "analyticsDataV1Alpha",
+  "tier": "writer"
+ },
+ {
+  "field": "gaReportTask",
+  "method": "analyticsdata.properties.reportTasks.get",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/reportTasks/{reportTasksId}",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaReportTasks",
+  "method": "analyticsdata.properties.reportTasks.list",
+  "http": "GET",
+  "path": "v1alpha/properties/{propertiesId}/reportTasks",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaQueryReportTask",
+  "method": "analyticsdata.properties.reportTasks.query",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/reportTasks/{reportTasksId}:query",
+  "service": "analyticsDataV1Alpha",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCreateReportTask",
+  "method": "analyticsdata.properties.reportTasks.create",
+  "http": "POST",
+  "path": "v1alpha/properties/{propertiesId}/reportTasks",
+  "service": "analyticsDataV1Alpha",
+  "tier": "writer"
  }
 ]
