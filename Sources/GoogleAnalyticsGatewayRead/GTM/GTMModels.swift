@@ -53,7 +53,9 @@ public enum GTMModels {
   public static let account = ModelShape(
     typeName: "GtmAccount",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("name", .string),
       ModelField("shareData", .boolean),
@@ -88,7 +90,9 @@ public enum GTMModels {
   public static let container = ModelShape(
     typeName: "GtmContainer",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("name", .string),
@@ -118,7 +122,9 @@ public enum GTMModels {
   public static let workspace = ModelShape(
     typeName: "GtmWorkspace",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -159,7 +165,9 @@ public enum GTMModels {
   public static let tag = ModelShape(
     typeName: "GtmTag",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -192,7 +200,9 @@ public enum GTMModels {
   public static let trigger = ModelShape(
     typeName: "GtmTrigger",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -246,7 +256,9 @@ public enum GTMModels {
   public static let variable = ModelShape(
     typeName: "GtmVariable",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -281,7 +293,9 @@ public enum GTMModels {
   public static let client = ModelShape(
     typeName: "GtmClient",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -300,7 +314,9 @@ public enum GTMModels {
   public static let folder = ModelShape(
     typeName: "GtmFolder",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -330,7 +346,9 @@ public enum GTMModels {
   public static let template = ModelShape(
     typeName: "GtmTemplate",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -346,7 +364,9 @@ public enum GTMModels {
   public static let transformation = ModelShape(
     typeName: "GtmTransformation",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -389,7 +409,9 @@ public enum GTMModels {
   public static let zone = ModelShape(
     typeName: "GtmZone",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -407,7 +429,9 @@ public enum GTMModels {
   public static let gtagConfig = ModelShape(
     typeName: "GtmGtagConfig",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -424,7 +448,9 @@ public enum GTMModels {
   public static let environment = ModelShape(
     typeName: "GtmEnvironment",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("workspaceId", .string),
@@ -445,7 +471,9 @@ public enum GTMModels {
   public static let destination = ModelShape(
     typeName: "GtmDestination",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("destinationId", .string),
@@ -459,7 +487,9 @@ public enum GTMModels {
   public static let containerVersionHeader = ModelShape(
     typeName: "GtmContainerVersionHeader",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("containerVersionId", .string),
@@ -482,7 +512,9 @@ public enum GTMModels {
   public static let containerVersion = ModelShape(
     typeName: "GtmContainerVersion",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("containerId", .string),
       ModelField("containerVersionId", .string),
@@ -572,7 +604,9 @@ public enum GTMModels {
   public static let userPermission = ModelShape(
     typeName: "GtmUserPermission",
     fields: [
-      ModelField("path", .resourceName, required: true),
+      // Optional rather than required: entities embedded in a ContainerVersion
+      // (and workspace-status entities) are returned without their API path.
+      ModelField("path", .resourceName),
       ModelField("accountId", .string),
       ModelField("emailAddress", .string),
       ModelField("accountAccess", .object(accountAccess)),
