@@ -52,7 +52,7 @@ public enum GAAlphaDataModels {
   public static let propertyQuotasSnapshot = ModelShape(
     typeName: "GAPropertyQuotasSnapshot",
     fields: [
-      ModelField("name", .resourceName, required: true),
+      ModelField("name", .resourceName),
       ModelField("corePropertyQuota", .object(propertyQuota)),
       ModelField("realtimePropertyQuota", .object(propertyQuota)),
       ModelField("funnelPropertyQuota", .object(propertyQuota))
