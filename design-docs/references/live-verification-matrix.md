@@ -59,11 +59,23 @@ writer credential carries). Assets: GA account `accounts/<ACCOUNT_ID>`, property
 - Headless Chromium: gtag.js 200, /g/collect POST 204.
 - gateway gaRunRealtimeReport returned the visit. VERIFIED.
 
-## Tag Manager v2 — pending one manual step
+## Tag Manager v2 — live cycle verified (2026-08-25)
 
-- GTM has no API for account creation; the signup requires ToS + GDPR
-  acceptance, which the automation policy leaves to a human. Once the account
-  exists, the planned live cycle is: gtmCreateContainer -> gtmWorkspaces ->
-  gtmCreateVariable/Trigger/Tag (GA4 config tag) -> gtmCreateVersion ->
-  gtmPublishVersion -> gtmContainerSnippet -> reads (containers, versions,
-  version_headers live/latest) -> cleanup deletes.
+After the user approved the GTM ToS: gtmAccounts, gtmContainers,
+gtmCreateContainer (new container via API), gtmWorkspaces,
+gtmContainerSnippet, gtmCreateVariable (constant measurement id),
+gtmCreateTrigger (pageview), gtmCreateTag (googtag referencing the variable,
+firing trigger bound), gtmWorkspaceStatus (3 added changes),
+gtmCreateVersion, gtmPublishVersion, gtmLiveVersion, gtmLatestVersionHeader,
+gtmVersionHeaders, gtmVersion — all OK against Google. A headless Chromium
+page carrying the container snippet then fired gtm.js (200) -> the published
+GA4 tag loaded gtag.js (200) -> /g/collect (204). Live-flow fix: entities
+embedded in a ContainerVersion are returned without their path, so the
+required marker was relaxed across GTM entity shapes.
+
+## GA4 Data API v1alpha — 13/13 registered, spot-verified live (2026-08-25)
+
+runFunnelReport returned real funnel step data (the verification visits),
+propertyQuotasSnapshot returned live token quota (after relaxing the name
+requiredness Google omits), reportTasks and recurringAudienceLists lists OK.
+Coverage after this addition: 296/296 fields against the discovery documents.
