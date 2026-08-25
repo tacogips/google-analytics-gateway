@@ -34,7 +34,13 @@ public struct OAuthDesktopClient: Decodable, Equatable, Sendable {
     }
     let root = try decoder.container(keyedBy: RootKeys.self)
     let rawInstalled = try root.nestedContainer(keyedBy: AuthAnyCodingKey.self, forKey: .installed)
-    let allowed = Set(["client_id", "client_secret", "auth_uri", "token_uri", "redirect_uris"])
+    // The console's real download also carries informational metadata
+    // (project_id, auth_provider_x509_cert_url); both are inert here but must
+    // not fail the unknown-field check.
+    let allowed = Set([
+      "client_id", "client_secret", "auth_uri", "token_uri", "redirect_uris",
+      "project_id", "auth_provider_x509_cert_url"
+    ])
     guard rawInstalled.allKeys.allSatisfy({ allowed.contains($0.stringValue) }) else {
       throw GatewayError(code: .validationError, message: "OAuth client file contains unsupported fields")
     }
@@ -46,7 +52,12 @@ public struct OAuthDesktopClient: Decodable, Equatable, Sendable {
     redirectUris = try installed.decode([String].self, forKey: .redirectUris)
     guard Self.isSafeField(clientId, maximum: 4_096),
       clientSecret.map({ Self.isSafeField($0, maximum: 16_384) }) ?? true,
-      authUri == Self.authorizationEndpoint,
+      // The console downloads desktop clients with the legacy spelling
+      // `/o/oauth2/auth`; both spellings are Google's own endpoint, and the
+      // authorization URL is always built from the pinned v2 constant, so
+      // accepting either does not widen where the flow can be sent.
+      authUri == Self.authorizationEndpoint
+        || authUri == "https://accounts.google.com/o/oauth2/auth",
       tokenUri == Self.tokenEndpoint,
       redirectUris.count <= 32,
       redirectUris.allSatisfy({ Self.isSafeField($0, maximum: 1_024) }) else {

@@ -157,7 +157,18 @@ public final class OAuthLoopbackReceiver: OAuthLoopbackReceiving, @unchecked Sen
     if let error = items.first(where: { $0.name == "error" })?.value, !error.isEmpty {
       return .providerError
     }
-    guard items.count == 2, Set(items.map(\.name)) == Set(["state", "code"]),
+    // Google's installed-app redirect carries informational parameters beyond
+    // state and code — `scope` always (the granted scope list), `iss` (the
+    // RFC 9207 issuer), and sometimes `authuser`, `prompt`, or `hd`. They are
+    // ignored but must not fail the one-shot callback; any parameter outside
+    // this allow-list still does, and a present `iss` must name Google.
+    let ignorable: Set<String> = ["scope", "authuser", "prompt", "hd", "iss"]
+    if let issuer = items.first(where: { $0.name == "iss" })?.value,
+      issuer != "https://accounts.google.com" {
+      throw GatewayError(code: .upstreamResponseInvalid, message: "OAuth callback validation failed")
+    }
+    let names = Set(items.map(\.name))
+    guard names.subtracting(ignorable) == Set(["state", "code"]),
       let code = items.first(where: { $0.name == "code" })?.value, !code.isEmpty, code.utf8.count <= 8_192,
       code.utf8.allSatisfy({ $0 >= 33 && $0 != 127 }) else {
       throw GatewayError(code: .upstreamResponseInvalid, message: "OAuth callback validation failed")
