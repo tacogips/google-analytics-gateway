@@ -34,8 +34,15 @@ let package = Package(
     .executable(name: "google-analytics-gateway-writer", targets: ["GoogleAnalyticsGatewayWriterCLI"]),
     .executable(name: "google-analytics-gateway-admin", targets: ["GoogleAnalyticsGatewayAdminCLI"])
   ],
+  dependencies: [
+    // Publication and revision pinning of the neutral SDK kit is operator-owned.
+    .package(path: "../../gateway-sdk-kit")
+  ],
   targets: [
-    .target(name: "GoogleAnalyticsGatewayCore"),
+    .target(
+      name: "GoogleAnalyticsGatewayCore",
+      dependencies: [.product(name: "GatewaySDKKit", package: "gateway-sdk-kit")]
+    ),
     .target(name: "GoogleAnalyticsGatewayRead", dependencies: ["GoogleAnalyticsGatewayCore"]),
     .target(
       name: "GoogleAnalyticsGatewayWrite",
@@ -78,6 +85,30 @@ let package = Package(
         "GoogleAnalyticsGatewayCore", "GoogleAnalyticsGatewayRead",
         "GoogleAnalyticsGatewayWrite", "GoogleAnalyticsGatewayAdmin",
         "GoogleAnalyticsGatewayTestSupport"
+      ]
+    ),
+    // These targets compile the README import contract without directly
+    // importing Core. GatewaySDKKit is intentional here: consumers import the
+    // neutral kit alongside exactly one tier product.
+    .testTarget(
+      name: "GoogleAnalyticsGatewayReadConsumerTests",
+      dependencies: [
+        .product(name: "GatewaySDKKit", package: "gateway-sdk-kit"),
+        "GoogleAnalyticsGatewayRead"
+      ]
+    ),
+    .testTarget(
+      name: "GoogleAnalyticsGatewayWriteConsumerTests",
+      dependencies: [
+        .product(name: "GatewaySDKKit", package: "gateway-sdk-kit"),
+        "GoogleAnalyticsGatewayWrite"
+      ]
+    ),
+    .testTarget(
+      name: "GoogleAnalyticsGatewayAdminConsumerTests",
+      dependencies: [
+        .product(name: "GatewaySDKKit", package: "gateway-sdk-kit"),
+        "GoogleAnalyticsGatewayAdmin"
       ]
     ),
     // Depends on the three executable targets so `swift test` builds the real

@@ -1,4 +1,10 @@
 import Foundation
+import GatewaySDKKit
+
+private struct CatalogSearchOutput: Codable {
+  let count: Int
+  let matches: [GatewaySchemaSearch.Match]
+}
 
 /// The shared command frame.
 ///
@@ -10,6 +16,7 @@ import Foundation
 public struct CommandFrame: Sendable {
   private let role: RoleDescriptor
   private let registry: CapabilityRegistry
+  private let catalog: GatewaySchemaCatalog?
   private let makeRuntime: @Sendable (CredentialSelection) throws -> GraphQLRuntime
   private let authCommands: AuthCommands
   private let readFile: @Sendable (String) throws -> Data
@@ -17,12 +24,14 @@ public struct CommandFrame: Sendable {
   public init(
     role: RoleDescriptor,
     registry: CapabilityRegistry,
+    catalog: GatewaySchemaCatalog? = nil,
     makeRuntime: @escaping @Sendable (CredentialSelection) throws -> GraphQLRuntime,
     authCommands: AuthCommands,
     readFile: @escaping @Sendable (String) throws -> Data = CommandFrame.readFileFromDisk
   ) {
     self.role = role
     self.registry = registry
+    self.catalog = catalog
     self.makeRuntime = makeRuntime
     self.authCommands = authCommands
     self.readFile = readFile
@@ -49,6 +58,13 @@ public struct CommandFrame: Sendable {
         standardError: "\(error.description)\n\(usage)\n",
         exitCode: error.exitCode
       )
+    } catch let error as GatewaySDKError {
+      let gatewayError = GatewayError.validation(error.description)
+      return CommandOutcome(
+        standardOutput: "",
+        standardError: "\(gatewayError.description)\n\(usage)\n",
+        exitCode: gatewayError.exitCode
+      )
     } catch {
       return CommandOutcome(
         standardOutput: "",
@@ -73,6 +89,39 @@ public struct CommandFrame: Sendable {
         standardOutput: GraphQLSchemaPrinter(registry: registry).print(),
         standardError: "",
         exitCode: .success
+      )
+    case .graphQLSearch(let pattern, let kinds, let includeReferencedTypes, let limit, let pretty):
+      guard let catalog else { throw GatewayError.internalFailure("SDK catalog is unavailable.") }
+      let matches = try GatewaySchemaSearch(catalog: catalog).search(
+        pattern, options: .init(kinds: kinds, includeReferencedTypes: includeReferencedTypes, limit: limit)
+      )
+      let data = try JSONEncoder().encode(CatalogSearchOutput(count: matches.count, matches: matches))
+      let output = try JSONValue.decodeJSON(data).encodedJSON(pretty: pretty)
+      return CommandOutcome(standardOutput: output + "\n", standardError: "", exitCode: .success)
+    case .graphQLOperation(let name, let variables, let variablesPath, let selectionPaths, let selection, let pretty):
+      guard let catalog else { throw GatewayError.internalFailure("SDK catalog is unavailable.") }
+      if catalog.operation(named: name) == nil,
+        let requiredTier = Self.knownTier(for: name),
+        !role.tier.includes(requiredTier) {
+        return CommandEnvelope.failure(GatewayError(
+          code: .capabilityDenied,
+          message: "Operation \(name) requires the \(requiredTier.rawValue) tier.",
+          requiredTier: requiredTier
+        ), pretty: pretty)
+      }
+      guard catalog.operation(named: name) != nil else {
+        throw GatewayError.validation("Unknown operation \(name).")
+      }
+      let data = try variablesPath.map { try readFile($0) } ?? variables
+      let decoded = try Self.decodeVariables(data, source: variablesPath == nil ? "--variables" : "--variables-file")
+      let kitVariables = decoded.mapValues(GoogleAnalyticsJSONBridge.gatewayValue)
+      let request = GatewayOperationRequest(
+        operation: name, variables: kitVariables,
+        selection: selectionPaths.map(GatewaySelection.fields) ?? .default
+      )
+      let built = try GatewayDocumentBuilder(catalog: catalog).build(request)
+      return await runGraphQL(
+        document: built.document, variables: decoded, selection: selection, pretty: pretty
       )
     case .graphQLQuery(let document, let variables, let selection, let pretty):
       let decoded = try Self.decodeVariables(variables, source: "--variables")
@@ -145,6 +194,8 @@ public struct CommandFrame: Sendable {
       "  graphql query '<document>' [--variables '<json-object>']",
       "  graphql query-file <path> [--variables-file <path>]",
       "  graphql schema",
+      "  graphql search <regex> [--kinds <csv>] [--include-referenced-types] [--limit <n>]",
+      "  graphql operation <name> [--variables <json> | --variables-file <path>] [--select <paths>]",
       "  auth oauth2 [--no-browser] [--timeout-seconds <n>]",
       "  auth status",
       "  auth logout",
@@ -169,5 +220,10 @@ public struct CommandFrame: Sendable {
       "Exit codes: 0 success, 2 usage, 3 credential, 4 rejected, 5 transient, 6 local, 70 internal"
     )
     return lines.joined(separator: "\n")
+  }
+
+  private static func knownTier(for field: String) -> CapabilityTier? {
+    CapabilityCatalog.knownTier(field: field, isMutation: false)
+      ?? CapabilityCatalog.knownTier(field: field, isMutation: true)
   }
 }

@@ -144,26 +144,44 @@ struct ExecutableLinkBoundaryTests {
       encoding: .utf8
     )
 
-    func dependencies(ofTarget name: String) throws -> String {
-      guard let range = manifest.range(of: "name: \"\(name)\"") else {
+    func targetDeclaration(_ name: String) throws -> String {
+      let prefixes = [
+        "    .target(\n      name: \"\(name)\"",
+        "    .target(name: \"\(name)\"",
+        "    .executableTarget(\n      name: \"\(name)\""
+      ]
+      guard let range = prefixes.lazy.compactMap({ manifest.range(of: $0) }).first else {
         throw CLITestError.binaryNotFound(name)
       }
-      let remainder = manifest[range.upperBound...]
-      guard let close = remainder.range(of: "]") else { return "" }
-      return String(remainder[remainder.startIndex..<close.lowerBound])
+      let remainder = manifest[range.lowerBound...]
+      guard let close = remainder.range(of: "\n    ),") ?? remainder.range(of: "\n    )") else {
+        throw CLITestError.binaryNotFound(name)
+      }
+      return String(remainder[remainder.startIndex..<close.upperBound])
     }
 
-    let reader = try dependencies(ofTarget: "GoogleAnalyticsGatewayReaderCLI")
+    let core = try targetDeclaration("GoogleAnalyticsGatewayCore")
+    #expect(core.contains(".product(name: \"GatewaySDKKit\", package: \"gateway-sdk-kit\")"))
+
+    let reader = try targetDeclaration("GoogleAnalyticsGatewayReaderCLI")
     #expect(reader.contains("GoogleAnalyticsGatewayRead"))
     #expect(!reader.contains("GoogleAnalyticsGatewayWrite"))
     #expect(!reader.contains("GoogleAnalyticsGatewayAdmin"))
 
-    let writer = try dependencies(ofTarget: "GoogleAnalyticsGatewayWriterCLI")
+    let writer = try targetDeclaration("GoogleAnalyticsGatewayWriterCLI")
     #expect(writer.contains("GoogleAnalyticsGatewayWrite"))
     #expect(!writer.contains("GoogleAnalyticsGatewayAdmin"))
 
-    let admin = try dependencies(ofTarget: "GoogleAnalyticsGatewayAdminCLI")
+    let admin = try targetDeclaration("GoogleAnalyticsGatewayAdminCLI")
     #expect(admin.contains("GoogleAnalyticsGatewayAdmin"))
+
+    for target in [
+      "GoogleAnalyticsGatewayRead", "GoogleAnalyticsGatewayWrite", "GoogleAnalyticsGatewayAdmin",
+      "GoogleAnalyticsGatewayReaderCLI", "GoogleAnalyticsGatewayWriterCLI", "GoogleAnalyticsGatewayAdminCLI"
+    ] {
+      let declaration = try targetDeclaration(target)
+      #expect(!declaration.contains("GatewaySDKKit"), "\(target) directly depends on GatewaySDKKit")
+    }
   }
 }
 
@@ -276,6 +294,8 @@ struct CrossTierSchemaTests {
       #expect(result.exitCode == 0, "\(name)")
       #expect(result.standardOutput.contains("Usage: \(name)"), "\(name)")
       #expect(result.standardOutput.contains("graphql query"), "\(name)")
+      #expect(result.standardOutput.contains("graphql search <regex>"), "\(name)")
+      #expect(result.standardOutput.contains("graphql operation <name>"), "\(name)")
       #expect(result.standardOutput.contains("auth oauth2"), "\(name)")
     }
 
@@ -404,6 +424,42 @@ struct ExecutableRuntimeBoundaryTests {
       #expect(result.exitCode == 2, "\(field)")
       #expect(result.standardOutput.contains("CAPABILITY_DENIED"), "\(field)")
       #expect(result.standardOutput.contains("\"requiredTier\":\"admin\""), "\(field)")
+    }
+  }
+
+  @Test("Each binary builds an owned named operation before credential resolution")
+  func binariesBuildTierOwnedNamedOperations() throws {
+    let cases: [(String, [String])] = [
+      (
+        BuiltProducts.reader,
+        [
+          "graphql", "operation", "gaDataStream",
+          "--variables", "{\"name\":\"properties/123456/dataStreams/789\"}",
+          "--select", "name"
+        ]
+      ),
+      (
+        BuiltProducts.writer,
+        [
+          "graphql", "operation", "gaCreateDataStream",
+          "--variables", "{\"parent\":\"properties/123456\",\"dataStream\":{\"type\":\"WEB_DATA_STREAM\"}}",
+          "--select", "dataStream.name"
+        ]
+      ),
+      (
+        BuiltProducts.admin,
+        [
+          "graphql", "operation", "gaDeleteDataStream",
+          "--variables", "{\"name\":\"properties/123456/dataStreams/789\",\"confirmName\":\"properties/123456/dataStreams/789\"}"
+        ]
+      )
+    ]
+
+    for (binary, arguments) in cases {
+      let result = try BuiltProducts.run(binary, arguments)
+      #expect(result.exitCode == 3, "\(binary)")
+      #expect(result.standardOutput.contains("AUTHENTICATION_FAILED"), "\(binary)")
+      #expect(!result.standardOutput.contains("VALIDATION_ERROR"), "\(binary)")
     }
   }
 

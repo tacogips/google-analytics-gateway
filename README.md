@@ -8,8 +8,12 @@ Google tag is managed programmatically) behind one capability registry that
 drives GraphQL execution, schema printing, and request planning from the same
 declarations.
 
-Zero external dependencies: the GraphQL engine, OAuth 2.0 PKCE flow, and HTTP
-transport are self-contained Swift on Foundation.
+`GoogleAnalyticsGatewayCore` has one neutral dependency, `GatewaySDKKit`, for
+the reusable SDK catalog and document-builder contract. Google authentication,
+transport, and capability definitions remain self-contained Swift on Foundation.
+This phase resolves the kit from the sibling `../../gateway-sdk-kit` checkout;
+publishing it and replacing that path with a pinned remote revision is an
+operator-owned follow-up.
 
 ## Executables
 
@@ -35,6 +39,17 @@ swift run google-analytics-gateway-reader graphql query \
 swift run google-analytics-gateway-reader graphql query-file query.graphql \
   --variables-file variables.json
 
+# Search this tier's local schema without credentials or network access
+swift run google-analytics-gateway-reader graphql search 'DataStream' \
+  --kinds query,object --include-referenced-types --limit 10
+
+# Build and execute a catalog-defined operation
+swift run google-analytics-gateway-writer graphql operation gaCreateDataStream \
+  --variables '{"parent":"properties/123","dataStream":{"displayName":"Web","type":"WEB_DATA_STREAM"}}' \
+  --select dataStream.name,dataStream.displayName
+swift run google-analytics-gateway-writer graphql operation gaCreateDataStream \
+  --variables-file variables.json --select dataStream.name,dataStream.displayName
+
 # Environment and credential readiness (never prints secret values)
 swift run google-analytics-gateway-reader doctor
 
@@ -43,9 +58,12 @@ swift run google-analytics-gateway-reader auth oauth2 --config profiles.json --p
 swift run google-analytics-gateway-reader auth status --config profiles.json
 ```
 
-Output is a GraphQL envelope on stdout (`{"data": ...}` /
-`{"data": null, "errors": [...]}`), exit codes: 0 success, 2 usage,
-3 credential, 4 rejected, 5 transient upstream, 6 local file, 70 internal.
+GraphQL execution commands (`query`, `query-file`, and `operation`) write a
+GraphQL envelope to stdout (`{"data": ...}` /
+`{"data": null, "errors": [...]}`). `graphql search` instead writes a local
+`{"count": N, "matches": [...]}` result, while `graphql schema` writes SDL.
+Exit codes are 0 success, 2 usage, 3 credential, 4 rejected, 5 transient
+upstream, 6 local file, and 70 internal.
 
 ## Credentials
 
@@ -73,13 +91,82 @@ configuration at all, a synthesized profile reads an access token from
 use). Scope bundles are validated exactly per capability; the reader binary
 cannot bootstrap writer scopes.
 
-## Swift library
+## Swift SDK library
 
-The `GoogleAnalyticsGatewayRead` / `...Write` / `...Admin` library products
-expose the same runtime: build a `CapabilityRegistry` from the tier's
-definitions, wire a `CapabilityExecutor` with your `CredentialProvider`, and
-call `GraphQLRuntime.execute(document:variables:)` — or call the
-`CapabilityExecutor` directly with typed invocations, bypassing GraphQL.
+Import the neutral kit and exactly the tier module you need. Constructors are
+tier-safe and cumulative: writer includes reader capabilities; admin includes
+writer and reader capabilities. Selecting a constructor never grants a higher
+tier.
+
+```swift
+import GatewaySDKKit
+import GoogleAnalyticsGatewayRead
+
+let sdk = try GoogleAnalyticsGatewaySDK.reader()
+precondition(sdk.catalog.validate().isEmpty)
+let sdl = sdk.schemaSDL() // Local; no credential is read.
+let matches = try sdk.searchSchema(
+  "DataStream",
+  options: .init(kinds: [.query, .object], includeReferencedTypes: true, limit: 10)
+)
+```
+
+Use the matching module for cumulative tiers:
+
+```swift
+import GatewaySDKKit
+import GoogleAnalyticsGatewayWrite
+let writer = try GoogleAnalyticsGatewaySDK.writer()
+
+import GoogleAnalyticsGatewayAdmin
+let admin = try GoogleAnalyticsGatewaySDK.admin()
+```
+
+Named operations use catalog-validated variables and either the bounded default
+selection or explicit dot paths. Raw GraphQL retains the same response envelope.
+Supply the environment at the host boundary rather than embedding credential
+values in source.
+
+```swift
+func fetchDataStream(
+  with sdk: GoogleAnalyticsGatewaySDK,
+  environment: [String: String]
+) async -> [GatewayEnvelope] {
+  let named = await sdk.invoke(
+    GatewayOperationRequest(
+      operation: "gaDataStream",
+      variables: ["name": .string("properties/123/dataStreams/456")],
+      selection: .default
+    ),
+    environment: environment
+  )
+  let selected = await sdk.invoke(
+    GatewayOperationRequest(
+      operation: "gaDataStream",
+      variables: ["name": .string("properties/123/dataStreams/456")],
+      selection: .fields(["name", "displayName"])
+    ),
+    environment: environment
+  )
+  let raw = await sdk.execute(
+    document: "query Get($name: ID!) { gaDataStream(name: $name) { name } }",
+    variables: ["name": GatewayJSONValue.string("properties/123/dataStreams/456")],
+    environment: environment
+  )
+  return [named, selected, raw]
+}
+```
+
+Each call returns a `GatewayEnvelope`; inspect its `data`, `errors`,
+`requestId`, and `exitCode`. After runtime execution, `rawOutput` contains the
+compact GraphQL envelope equivalent to CLI output. Supply only JSON-compatible
+finite `Double` values: raw execution does not currently preflight nested
+non-finite values before runtime handling.
+
+The per-call environment dictionary is the only environment observed by SDK
+`invoke` and `execute` calls. SDK execution never falls back to
+`ProcessInfo.processInfo.environment`; hosts should supply credential references
+through their own environment dictionary and never print or persist secret values.
 
 ## Development
 

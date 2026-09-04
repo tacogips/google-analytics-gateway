@@ -108,7 +108,18 @@ struct CommandParsingTests {
     ("unknown command", ["explain"]),
     ("unknown option", ["doctor", "--verbose"]),
     ("option without a value", ["doctor", "--profile"]),
-    ("repeated option", ["doctor", "--profile", "one", "--profile", "two"])
+    ("repeated option", ["doctor", "--profile", "one", "--profile", "two"]),
+    ("schema ignores search option", ["graphql", "schema", "--limit", "5"]),
+    ("query ignores operation option", ["graphql", "query", "{ a }", "--select", "name"]),
+    ("duplicate search flag", ["graphql", "search", "a", "--include-referenced-types", "--include-referenced-types"]),
+    ("unknown search kind", ["graphql", "search", "a", "--kinds", "query,imaginary"]),
+    ("zero search limit", ["graphql", "search", "a", "--limit", "0"]),
+    ("negative search limit", ["graphql", "search", "a", "--limit", "-1"]),
+    ("search kind with an empty middle component", ["graphql", "search", "a", "--kinds", "query,,object"]),
+    ("search kind with an empty trailing component", ["graphql", "search", "a", "--kinds", "query,"]),
+    ("operation selection with an empty middle component", ["graphql", "operation", "gaAccounts", "--select", "nodes.name,,pageInfo.nextPageToken"]),
+    ("operation selection with an empty trailing component", ["graphql", "operation", "gaAccounts", "--select", "nodes.name,"]),
+    ("operation has both variable sources", ["graphql", "operation", "gaAccounts", "--variables", "{}", "--variables-file", "/v.json"])
   ]
 
   @Test("Malformed invocations are usage errors", arguments: rejectedInvocations)
@@ -136,5 +147,34 @@ struct CommandParsingTests {
       == .authLogout(selection: selection))
     #expect(try CommandParser.parse(["doctor", "--config", "/fixtures/config.json"])
       == .doctor(selection: selection))
+  }
+
+  @Test("Catalog search and named operation modes retain typed options")
+  func parsesCatalogModes() throws {
+    let search = try CommandParser.parse([
+      "graphql", "search", "DataStream", "--kinds", "query,object",
+      "--include-referenced-types", "--limit", "5", "--pretty"
+    ])
+    guard case .graphQLSearch(let pattern, let kinds, let includeReferences, let limit, let pretty) = search else {
+      Issue.record("Expected catalog search command")
+      return
+    }
+    #expect(pattern == "DataStream")
+    #expect(kinds == [.query, .object])
+    #expect(includeReferences)
+    #expect(limit == 5)
+    #expect(pretty)
+
+    let operation = try CommandParser.parse([
+      "graphql", "operation", "gaDataStream", "--variables", "{}", "--select", "name,displayName"
+    ])
+    guard case .graphQLOperation(let name, let variables, let variablesPath, let paths, _, _) = operation else {
+      Issue.record("Expected named operation command")
+      return
+    }
+    #expect(name == "gaDataStream")
+    #expect(variables == Data("{}".utf8))
+    #expect(variablesPath == nil)
+    #expect(paths == ["name", "displayName"])
   }
 }

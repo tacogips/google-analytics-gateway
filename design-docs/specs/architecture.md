@@ -12,10 +12,13 @@ v1alpha extras), GA4 Data API v1beta, Google Tag Manager API v2, and Google tag
 
 1. Role-split CLI executables accepting one-shot GraphQL documents and printing
    GraphQL-envelope JSON.
-2. A Swift library exposing the same capability registry, runtime, and typed
-   request plumbing to Swift callers.
+2. A Swift library exposing the same capability registry and runtime plus a
+   tier-safe `GoogleAnalyticsGatewaySDK` facade for named-operation and raw
+   GraphQL calls.
 
-Zero external SwiftPM dependencies. The synthesis rule (see
+The package has one gateway-neutral SwiftPM dependency, `GatewaySDKKit`, on the
+Core target only; authentication, transport, and capability code remain local.
+The synthesis rule (see
 references/marketing-gateway-and-wrike-gateway-notes.md):
 
 - GraphQL engine, capability registry, and tier model: ported from
@@ -39,7 +42,8 @@ products:
   .executable google-analytics-gateway-writer  [WriterCLI]
   .executable google-analytics-gateway-admin   [AdminCLI]
 targets:
-  Core   — GraphQL engine, capability framework, OAuth, transport, secure files,
+  Core   — GraphQL engine, capability framework, SDK facade/catalog adapter,
+           OAuth, transport, secure files,
            config/profiles, error taxonomy, shared CLI runner, name-only
            CapabilityCatalog (for CAPABILITY_DENIED + requiredTier answers)
   Read   — reader-tier CapabilityDefinitions (GA admin reads, Data API reports,
@@ -61,6 +65,9 @@ marketing-gateway's profile validation: credential profiles carry exact
 per-capability scope bundles.
 
 The template `AppCore`/`AppCLI` targets are removed.
+
+The SDK dependency, catalog mapping, cumulative tier composition, environment
+boundary, and CLI data flow are specified in `specs/design-gateway-sdk.md`.
 
 ## GraphQL engine (ported subset)
 

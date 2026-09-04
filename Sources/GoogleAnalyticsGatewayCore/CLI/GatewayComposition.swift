@@ -7,12 +7,28 @@ import Foundation
 /// individual initializers directly; nothing in this type reads a flag or an
 /// undocumented environment variable to change behavior.
 public enum GatewayComposition {
+  /// Builds the SDK runtime from exactly the supplied environment. Unlike the
+  /// command frame, this path intentionally never reads process environment.
+  public static func makeRuntime(
+    role: RoleDescriptor,
+    definitions: [CapabilityDefinition],
+    environment: [String: String]
+  ) throws -> GraphQLRuntime {
+    try makeComposedRuntime(
+      role: role,
+      definitions: definitions,
+      selection: CredentialSelection(configPath: nil, profileID: nil),
+      environment: environment
+    )
+  }
+
   public static func makeCommandFrame(
     role: RoleDescriptor,
     definitions: [CapabilityDefinition],
     environment: [String: String] = ProcessInfo.processInfo.environment
   ) throws -> CommandFrame {
     let registry = try CapabilityRegistry(tier: role.tier, definitions: definitions)
+    let catalog = try GoogleAnalyticsSchemaCatalogExporter.export(role: role, definitions: definitions)
     let resolver = CredentialResolver(refresher: OAuthClient())
     let authService = AuthService(resolver: resolver, supportedTier: role.tier)
     let authCommands = AuthCommands(
@@ -22,29 +38,43 @@ public enum GatewayComposition {
       environment: environment
     )
     let makeRuntime: @Sendable (CredentialSelection) throws -> GraphQLRuntime = { selection in
-      let resolution = try ProfileSelector.resolve(
+      try Self.makeComposedRuntime(
+        role: role,
+        definitions: definitions,
         selection: selection,
-        tier: role.tier,
         environment: environment
       )
-      let provider = ProfileCredentialProvider(
-        profile: resolution.profile,
-        environment: environment,
-        resolver: CredentialResolver(refresher: OAuthClient())
-      )
-      let executor = CapabilityExecutor(
-        planner: CapabilityPlanner(registry: registry),
-        transport: URLSessionGoogleTransport(),
-        credentials: provider
-      )
-      return GraphQLRuntime(executor: executor)
     }
     return CommandFrame(
       role: role,
       registry: registry,
+      catalog: catalog,
       makeRuntime: makeRuntime,
       authCommands: authCommands
     )
+  }
+
+  private static func makeComposedRuntime(
+    role: RoleDescriptor,
+    definitions: [CapabilityDefinition],
+    selection: CredentialSelection,
+    environment: [String: String]
+  ) throws -> GraphQLRuntime {
+    let registry = try CapabilityRegistry(tier: role.tier, definitions: definitions)
+    let resolution = try ProfileSelector.resolve(
+      selection: selection, tier: role.tier, environment: environment
+    )
+    let provider = ProfileCredentialProvider(
+      profile: resolution.profile,
+      environment: environment,
+      resolver: CredentialResolver(refresher: OAuthClient())
+    )
+    let executor = CapabilityExecutor(
+      planner: CapabilityPlanner(registry: registry),
+      transport: URLSessionGoogleTransport(),
+      credentials: provider
+    )
+    return GraphQLRuntime(executor: executor)
   }
 
   /// Runs a role's command line and terminates with the documented exit code.

@@ -7,5 +7,5 @@ import GoogleAnalyticsGatewayAdmin
 // destructive and account-level capabilities are reachable.
 await GatewayComposition.runMain(
   role: .admin,
-  definitions: ReadCapabilities.all + WriteCapabilities.all + AdminCapabilities.all
+  definitions: AdminCapabilities.cumulative
 )

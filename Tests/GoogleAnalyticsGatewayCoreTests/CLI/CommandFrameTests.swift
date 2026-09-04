@@ -1,4 +1,5 @@
 import Foundation
+import GatewaySDKKit
 import GoogleAnalyticsGatewayCore
 import GoogleAnalyticsGatewayTestSupport
 import Testing
@@ -8,6 +9,21 @@ import Testing
 /// is injected, so none of this needs a credential or a network.
 @Suite("Command frame")
 struct CommandFrameTests {
+  static let catalog = GatewaySchemaCatalog(
+    provider: "google-analytics-gateway",
+    tier: "reader",
+    operations: [GatewayOperation(
+      name: "sampleDataStream",
+      kind: .query,
+      tier: "reader",
+      arguments: [GatewayArgument(name: "name", type: .nonNull(.named("ID")), isRequired: true)],
+      result: .named("SampleDataStream")
+    )],
+    types: [GatewayNamedType(name: "SampleDataStream", kind: .object([
+      GatewayField(name: "name", type: .nonNull(.named("ID")))
+    ]))]
+  )
+
   static func authCommands(
     role: RoleDescriptor = .reader,
     environment: [String: String] = [:],
@@ -33,6 +49,7 @@ struct CommandFrameTests {
     return CommandFrame(
       role: role,
       registry: registry,
+      catalog: catalog,
       makeRuntime: { _ in
         if let runtimeError { throw runtimeError }
         return runtime
@@ -75,6 +92,8 @@ struct CommandFrameTests {
     #expect(outcome.standardOutput.contains("Capability tier: reader"))
     #expect(outcome.standardOutput.contains("Mutation fields: none (this binary is read-only)"))
     #expect(outcome.standardOutput.contains(CredentialProfileConfiguration.pathEnvironmentVariable))
+    #expect(outcome.standardOutput.contains("graphql search <regex>"))
+    #expect(outcome.standardOutput.contains("graphql operation <name>"))
   }
 
   @Test("An unknown command exits with the usage code and writes nothing to stdout")
@@ -151,6 +170,114 @@ struct CommandFrameTests {
     ])
 
     #expect(outcome.exitCode == .usage)
+    #expect(await transport.requestCount == 0)
+  }
+
+  @Test("Named operation input errors fail before runtime construction")
+  func rejectsInvalidNamedOperationInput() async throws {
+    let transport = RecordingTransport()
+    let frame = try Self.frame(transport: transport)
+    let cases: [([String], String)] = [
+      (["graphql", "operation", "sampleDataStream", "--variables", "not-json"], "Malformed JSON"),
+      (["graphql", "operation", "sampleDataStream", "--variables", "{\"name\":\"properties/1/dataStreams/2\"}", "--select", "notAField"], "Invalid selection"),
+      (["graphql", "operation", "notAnOperation"], "Unknown operation")
+    ]
+
+    for (arguments, label) in cases {
+      let outcome = await frame.run(arguments: arguments)
+      #expect(outcome.exitCode == .usage, Comment(rawValue: label))
+      #expect(outcome.standardError.contains("VALIDATION_ERROR"), Comment(rawValue: label))
+    }
+    #expect(await transport.requestCount == 0)
+  }
+
+  @Test("Catalog validation failures are usage errors before runtime construction")
+  func rejectsInvalidCatalogCommandInput() async throws {
+    let transport = RecordingTransport()
+    let frame = try Self.frame(transport: transport)
+    let invalidPattern = await frame.run(arguments: ["graphql", "search", "["])
+    #expect(invalidPattern.exitCode == .usage)
+    #expect(invalidPattern.standardError.contains("invalid search pattern"))
+    let missingVariable = await frame.run(arguments: ["graphql", "operation", "sampleDataStream"])
+    #expect(missingVariable.exitCode == .usage)
+    #expect(missingVariable.standardError.contains("requires variable"))
+    #expect(await transport.requestCount == 0)
+  }
+
+  @Test("Catalog search is local, stable, and credential-free")
+  func searchesCatalogWithoutRuntime() async throws {
+    let transport = RecordingTransport()
+    let outcome = await (try Self.frame(transport: transport)).run(arguments: [
+      "graphql", "search", "sampleDataStream", "--kinds", "query", "--pretty"
+    ])
+    #expect(outcome.exitCode == .success)
+    #expect(outcome.standardOutput.contains("\"count\": 1"))
+    #expect(outcome.standardOutput.contains("sampleDataStream"))
+    #expect(await transport.requestCount == 0)
+  }
+
+  @Test("Catalog search filters limits and referenced-type expansion stay local")
+  func searchesCatalogWithFiltersAndLimits() async throws {
+    let transport = RecordingTransport()
+    let frame = try Self.frame(transport: transport)
+    let limited = await frame.run(arguments: [
+      "graphql", "search", "Sample", "--kinds", "query,object",
+      "--include-referenced-types", "--limit", "1"
+    ])
+    #expect(limited.exitCode == .success)
+    let output = try JSONValue.decodeJSON(Data(limited.standardOutput.utf8))
+    #expect(output["count"]?.intValue == 1)
+    #expect(output["matches"]?.arrayValue?.count == 1)
+    #expect(await transport.requestCount == 0)
+  }
+
+  @Test("Referenced search returns the exact reachable named type")
+  func searchIncludesExpectedReferencedType() async throws {
+    let transport = RecordingTransport()
+    let outcome = await (try Self.frame(transport: transport)).run(arguments: [
+      "graphql", "search", "^sampleDataStream$", "--kinds", "query", "--include-referenced-types"
+    ])
+    #expect(outcome.exitCode == .success)
+    let output = try JSONValue.decodeJSON(Data(outcome.standardOutput.utf8))
+    let matches = try #require(output["matches"]?.arrayValue)
+    #expect(matches.count == 2)
+    #expect(matches.map { $0["name"]?.stringValue } == ["sampleDataStream", "SampleDataStream"])
+    #expect(matches[1]["kind"]?.stringValue == "object")
+    #expect(matches[1]["matchedOn"]?.arrayValue?.compactMap(\.stringValue) == ["referenced-by:sampleDataStream"])
+    #expect(await transport.requestCount == 0)
+  }
+
+  @Test("Named operation builds default and explicit selections before execution")
+  func runsNamedOperationWithBothVariableSources() async throws {
+    let inlineTransport = RecordingTransport.succeeding(json: SampleFixtures.dataStream)
+    let inline = await (try Self.frame(transport: inlineTransport)).run(arguments: [
+      "graphql", "operation", "sampleDataStream",
+      "--variables", "{\"name\":\"properties/123456/dataStreams/789\"}",
+      "--select", "name"
+    ])
+    #expect(inline.exitCode == .success)
+    #expect(await inlineTransport.requestCount == 1)
+
+    let fileTransport = RecordingTransport.succeeding(json: SampleFixtures.dataStream)
+    let file = try Self.frame(
+      transport: fileTransport,
+      files: ["/fixtures/variables.json": "{\"name\":\"properties/123456/dataStreams/789\"}"]
+    )
+    let defaultSelection = await file.run(arguments: [
+      "graphql", "operation", "sampleDataStream", "--variables-file", "/fixtures/variables.json"
+    ])
+    #expect(defaultSelection.exitCode == .success)
+    #expect(await fileTransport.requestCount == 1)
+  }
+
+  @Test("Published higher-tier query names deny before runtime construction")
+  func deniesHigherTierQueryOperation() async throws {
+    let transport = RecordingTransport()
+    let outcome = await (try Self.frame(transport: transport)).run(arguments: [
+      "graphql", "operation", "gtmUserPermission"
+    ])
+    #expect(outcome.exitCode == .usage)
+    #expect(outcome.standardOutput.contains("CAPABILITY_DENIED"))
     #expect(await transport.requestCount == 0)
   }
 

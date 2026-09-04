@@ -1,4 +1,5 @@
 import Foundation
+import GatewaySDKKit
 
 /// The parsed command line, shared by all three executables so grammar cannot
 /// drift between binaries.
@@ -8,6 +9,8 @@ public enum ParsedCommand: Sendable, Equatable {
   case graphQLQuery(document: String, variables: Data?, selection: CredentialSelection, pretty: Bool)
   case graphQLQueryFile(path: String, variablesPath: String?, selection: CredentialSelection, pretty: Bool)
   case graphQLSchema
+  case graphQLSearch(pattern: String, kinds: Set<GatewayDefinitionKind>, includeReferencedTypes: Bool, limit: Int?, pretty: Bool)
+  case graphQLOperation(name: String, variables: Data?, variablesPath: String?, selectionPaths: [String]?, selection: CredentialSelection, pretty: Bool)
   case authOAuth2(selection: CredentialSelection, noBrowser: Bool, timeoutSeconds: Int?)
   case authStatus(selection: CredentialSelection)
   case authLogout(selection: CredentialSelection)
@@ -58,7 +61,7 @@ public enum CommandParser {
   ]
 
   private static let valueOptions: Set<String> = [
-    "--variables", "--variables-file", "--config", "--profile", "--timeout-seconds"
+    "--variables", "--variables-file", "--config", "--profile", "--timeout-seconds", "--kinds", "--limit", "--select"
   ]
 
   public static func parse(_ arguments: [String]) throws -> ParsedCommand {
@@ -66,6 +69,8 @@ public enum CommandParser {
 
     var pretty = false
     var noBrowser = false
+    var includeReferencedTypes = false
+    var flags: Set<String> = []
     var positional: [String] = []
     var options: [String: String] = [:]
     var index = 0
@@ -84,9 +89,20 @@ public enum CommandParser {
       case "--version":
         return .version
       case "--pretty":
+        guard flags.insert(argument).inserted else {
+          throw GatewayError.validation("Option \(argument) is supplied more than once.")
+        }
         pretty = true
       case "--no-browser":
+        guard flags.insert(argument).inserted else {
+          throw GatewayError.validation("Option \(argument) is supplied more than once.")
+        }
         noBrowser = true
+      case "--include-referenced-types":
+        guard flags.insert(argument).inserted else {
+          throw GatewayError.validation("Option \(argument) is supplied more than once.")
+        }
+        includeReferencedTypes = true
       case _ where valueOptions.contains(argument):
         guard index + 1 < arguments.count else {
           throw GatewayError.validation("Option \(argument) requires a value.")
@@ -123,10 +139,15 @@ public enum CommandParser {
         Array(positional.dropFirst()),
         options: options,
         selection: selection,
-        pretty: pretty
+        pretty: pretty,
+        includeReferencedTypes: includeReferencedTypes,
+        noBrowser: noBrowser
       )
     case "auth":
-      guard options["--variables"] == nil, options["--variables-file"] == nil else {
+      guard options["--variables"] == nil, options["--variables-file"] == nil,
+        options["--kinds"] == nil, options["--limit"] == nil, options["--select"] == nil,
+        !includeReferencedTypes
+      else {
         throw GatewayError.validation("The auth commands do not accept variable options.")
       }
       return try parseAuth(
@@ -137,7 +158,8 @@ public enum CommandParser {
       )
     case "doctor":
       guard positional.count == 1, options["--variables"] == nil, options["--variables-file"] == nil,
-        !noBrowser, options["--timeout-seconds"] == nil
+        options["--kinds"] == nil, options["--limit"] == nil, options["--select"] == nil,
+        !noBrowser, !includeReferencedTypes, options["--timeout-seconds"] == nil
       else {
         throw GatewayError.validation("`doctor` accepts only --config and --profile.")
       }
@@ -162,7 +184,9 @@ public enum CommandParser {
     _ positional: [String],
     options: [String: String],
     selection: CredentialSelection,
-    pretty: Bool
+    pretty: Bool,
+    includeReferencedTypes: Bool,
+    noBrowser: Bool
   ) throws -> ParsedCommand {
     guard let subcommand = positional.first else {
       throw GatewayError.validation(
@@ -173,7 +197,9 @@ public enum CommandParser {
     let rest = Array(positional.dropFirst())
     switch subcommand {
     case "query":
-      guard rest.count == 1, let document = rest.first else {
+      guard !includeReferencedTypes, options["--kinds"] == nil, options["--limit"] == nil,
+        options["--select"] == nil, rest.count == 1, let document = rest.first
+      else {
         throw GatewayError.validation("`graphql query` accepts exactly one document argument.")
       }
       guard options["--variables-file"] == nil else {
@@ -182,7 +208,9 @@ public enum CommandParser {
       let variables = options["--variables"].map { Data($0.utf8) }
       return .graphQLQuery(document: document, variables: variables, selection: selection, pretty: pretty)
     case "query-file":
-      guard rest.count == 1, let path = rest.first else {
+      guard !includeReferencedTypes, options["--kinds"] == nil, options["--limit"] == nil,
+        options["--select"] == nil, rest.count == 1, let path = rest.first
+      else {
         throw GatewayError.validation("`graphql query-file` accepts exactly one path argument.")
       }
       guard options["--variables"] == nil else {
@@ -198,10 +226,60 @@ public enum CommandParser {
       // The global --config/--profile options are accepted (and ignored —
       // the schema renders locally) so a caller can keep them in a shared
       // command prefix; only the variables options are meaningless here.
-      guard rest.isEmpty, options["--variables"] == nil, options["--variables-file"] == nil else {
+      guard !includeReferencedTypes, rest.isEmpty, options["--variables"] == nil,
+        options["--variables-file"] == nil, options["--kinds"] == nil,
+        options["--limit"] == nil, options["--select"] == nil
+      else {
         throw GatewayError.validation("`graphql schema` accepts no additional arguments.")
       }
       return .graphQLSchema
+    case "search":
+      guard rest.count == 1, let pattern = rest.first,
+        options["--variables"] == nil, options["--variables-file"] == nil,
+        options["--select"] == nil, options["--timeout-seconds"] == nil, !noBrowser
+      else { throw GatewayError.validation("`graphql search` accepts one pattern and search options only.") }
+      let kinds: Set<GatewayDefinitionKind>
+      if let raw = options["--kinds"] {
+        let names = raw.split(separator: ",", omittingEmptySubsequences: false).map(String.init)
+        let parsed = names.compactMap(GatewayDefinitionKind.init(rawValue:))
+        guard !names.isEmpty, parsed.count == names.count else {
+          throw GatewayError.validation("Option --kinds contains an unknown kind.")
+        }
+        kinds = Set(parsed)
+      } else {
+        kinds = Set(GatewayDefinitionKind.allCases)
+      }
+      let limit: Int?
+      if let raw = options["--limit"] {
+        guard let value = Int(raw), value > 0 else {
+          throw GatewayError.validation("Option --limit must be a positive integer.")
+        }
+        limit = value
+      } else { limit = nil }
+      return .graphQLSearch(
+        pattern: pattern, kinds: kinds,
+        includeReferencedTypes: includeReferencedTypes, limit: limit, pretty: pretty
+      )
+    case "operation":
+      guard !includeReferencedTypes, options["--kinds"] == nil, options["--limit"] == nil,
+        options["--timeout-seconds"] == nil, !noBrowser, rest.count == 1, let name = rest.first
+      else {
+        throw GatewayError.validation("`graphql operation` accepts exactly one operation name.")
+      }
+      guard !(options["--variables"] != nil && options["--variables-file"] != nil) else {
+        throw GatewayError.validation("`graphql operation` accepts either --variables or --variables-file.")
+      }
+      let paths = options["--select"].map { raw in
+        raw.split(separator: ",", omittingEmptySubsequences: false).map(String.init)
+      }
+      if let paths, paths.isEmpty || paths.contains(where: { $0.isEmpty }) {
+        throw GatewayError.validation("Option --select requires comma-separated field paths.")
+      }
+      return .graphQLOperation(
+        name: name, variables: options["--variables"].map { Data($0.utf8) },
+        variablesPath: options["--variables-file"], selectionPaths: paths,
+        selection: selection, pretty: pretty
+      )
     default:
       throw GatewayError.validation(
         "Unknown graphql subcommand \(subcommand).",

@@ -6,5 +6,5 @@ import GoogleAnalyticsGatewayWrite
 // reachable from this binary at link time.
 await GatewayComposition.runMain(
   role: .writer,
-  definitions: ReadCapabilities.all + WriteCapabilities.all
+  definitions: WriteCapabilities.cumulative
 )
