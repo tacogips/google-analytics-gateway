@@ -11,9 +11,7 @@ declarations.
 `GoogleAnalyticsGatewayCore` has one neutral dependency, `GatewaySDKKit`, for
 the reusable SDK catalog and document-builder contract. Google authentication,
 transport, and capability definitions remain self-contained Swift on Foundation.
-This phase resolves the kit from the sibling `../../gateway-sdk-kit` checkout;
-publishing it and replacing that path with a pinned remote revision is an
-operator-owned follow-up.
+The package pins the public `tacogips/gateway-sdk-kit` GitHub release.
 
 ## Executables
 

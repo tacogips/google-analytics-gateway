@@ -35,8 +35,7 @@ let package = Package(
     .executable(name: "google-analytics-gateway-admin", targets: ["GoogleAnalyticsGatewayAdminCLI"])
   ],
   dependencies: [
-    // Publication and revision pinning of the neutral SDK kit is operator-owned.
-    .package(path: "../../gateway-sdk-kit")
+    .package(url: "https://github.com/tacogips/gateway-sdk-kit.git", exact: "0.1.0")
   ],
   targets: [
     .target(

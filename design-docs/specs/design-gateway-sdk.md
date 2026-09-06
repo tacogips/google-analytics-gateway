@@ -23,9 +23,8 @@ existing GraphQL language. It must not modify
 
 ## Package and module boundary
 
-`Package.swift` adds `.package(path: "../../gateway-sdk-kit")` with a comment
-that a later operator-owned publication phase replaces the path with a URL and
-revision pin. Only `GoogleAnalyticsGatewayCore` directly depends on the
+`Package.swift` adds `.package(url: "https://github.com/tacogips/gateway-sdk-kit.git", exact: "0.1.0")`.
+Only `GoogleAnalyticsGatewayCore` directly depends on the
 `GatewaySDKKit` product. Tier modules and executables continue to depend on the
 same lower-tier modules as today.
 
@@ -299,9 +298,8 @@ push occurs.
 
 ## Rollout, divergences, and risks
 
-The feature is additive. The local dependency is intentionally worktree-
-specific until the operator creates and publishes `tacogips/gateway-sdk-kit`;
-switching to a URL pin is outside this phase.
+The feature is additive. The dependency is pinned to the public
+`tacogips/gateway-sdk-kit` v0.1.0 release.
 
 There is no Cursor runtime, configuration, command protocol, or repository in
 scope. No Cursor compatibility adapter is needed. The only adapters are the

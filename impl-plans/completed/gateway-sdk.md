@@ -100,7 +100,7 @@ Accepted intentional divergences from generic kit behavior:
 
 **Actions**:
 
-- Add `.package(path: "../../gateway-sdk-kit")` with the accepted publication
+- Add `.package(url: "https://github.com/tacogips/gateway-sdk-kit.git", exact: "0.1.0")` with the accepted publication
   follow-up comment.
 - Add `.product(name: "GatewaySDKKit", package: "gateway-sdk-kit")` to
   `GoogleAnalyticsGatewayCore`; do not add it to tier modules or executables.
