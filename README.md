@@ -1,5 +1,12 @@
 # google-analytics-gateway
 
+An access token in the profile's `accessTokenEnvironmentVariable` overrides its
+OAuth token file, even with an explicit configuration. Login now reports the
+written file and the exact variable to unset before using it. Auth status follows
+the effective token source, and credential errors identify the selected source
+without printing token values. The synthesized environment-only profile remains
+available for queries; OAuth login requires a profile with a client and token file.
+
 A GraphQL gateway for Google Analytics (GA4), Google Tag Manager, and Google
 tag (gtag) management, usable as role-split CLI executables and as a Swift
 library. It wraps the GA4 Admin API v1beta, GA4 Data API v1beta, and Tag

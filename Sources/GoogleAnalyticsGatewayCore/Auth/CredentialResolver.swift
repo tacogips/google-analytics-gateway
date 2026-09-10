@@ -30,6 +30,22 @@ public struct CredentialResolver: CredentialResolving, Sendable {
   }
 
   public func accessToken(profile: CredentialProfile, environment: [String: String]) throws -> String {
+    do {
+      return try selectedAccessToken(profile: profile, environment: environment)
+    } catch let error as GatewayError {
+      let hasEnvironmentToken = !(environment[profile.accessTokenEnvironmentVariable] ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+      let source = hasEnvironmentToken ? "ENVIRONMENT_TOKEN" : "FILE"
+      let selected = hasEnvironmentToken ? profile.accessTokenEnvironmentVariable : (profile.tokenStorePath ?? "MISSING")
+      throw GatewayError(
+        code: error.code, message: "\(error.message) (tokenSource=\(source); selected=\(selected))",
+        requestID: error.requestID, httpStatus: error.httpStatus, capabilityID: error.capabilityID,
+        requiredTier: error.requiredTier, outcomeUnknown: error.outcomeUnknown, retryAfterSeconds: error.retryAfterSeconds,
+        recoveryGuidance: "\(error.recoveryGuidance ?? "Run auth login for this profile.") Unset \(profile.accessTokenEnvironmentVariable) to select the configured token store."
+      )
+    }
+  }
+
+  private func selectedAccessToken(profile: CredentialProfile, environment: [String: String]) throws -> String {
     if let token = environment[profile.accessTokenEnvironmentVariable]?
       .trimmingCharacters(in: .whitespacesAndNewlines), !token.isEmpty {
       // The same shape rule the token store enforces: an interior control
@@ -80,6 +96,14 @@ public struct CredentialResolver: CredentialResolving, Sendable {
   public func status(profile: CredentialProfile, environment: [String: String]) -> AuthStatus {
     let environmentTokenAvailable = !(environment[profile.accessTokenEnvironmentVariable] ?? "")
       .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    if environmentTokenAvailable {
+      let token = (environment[profile.accessTokenEnvironmentVariable] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+      return AuthStatus(
+        profile: profile, environmentTokenAvailable: true,
+        tokenStoreExists: profile.tokenStorePath.map { SecureLocalFiles.pathEntryExists(path: $0) } ?? false,
+        state: OAuthToken.isCredential(token) ? "ready" : "invalid", expiresAt: nil, hasRefreshToken: false
+      )
+    }
     guard let path = profile.tokenStorePath else {
       return AuthStatus(
         profile: profile,
@@ -166,6 +190,9 @@ public struct AuthStatus: Encodable, Equatable, Sendable {
   public let state: String
   public let expiresAt: Date?
   public let hasRefreshToken: Bool
+  public let tokenSource: String
+  public let tokenEnvironmentVariable: String?
+  public let tokenStorePath: String?
 
   /// Public so external `AuthManaging` conformances (library callers and test
   /// doubles) can construct the value their `status` implementation returns.
@@ -187,5 +214,8 @@ public struct AuthStatus: Encodable, Equatable, Sendable {
     self.state = state
     self.expiresAt = expiresAt
     self.hasRefreshToken = hasRefreshToken
+    tokenSource = environmentTokenAvailable ? "ENVIRONMENT_TOKEN" : "FILE"
+    tokenEnvironmentVariable = environmentTokenAvailable ? profile.accessTokenEnvironmentVariable : nil
+    tokenStorePath = environmentTokenAvailable ? nil : profile.tokenStorePath
   }
 }

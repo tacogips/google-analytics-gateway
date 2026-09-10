@@ -18,11 +18,17 @@ public struct AuthLoginOutput: Encodable, Equatable, Sendable {
   public let profileId: String
   public let state: String
   public let authorizationURL: String?
+  public let tokenSource: String
+  public let tokenStorePath: String?
+  public let tokenSourceHint: String?
 
-  public init(profileId: String, state: String, authorizationURL: String?) {
+  public init(profileId: String, state: String, authorizationURL: String?, tokenStorePath: String? = nil, tokenSourceHint: String? = nil) {
     self.profileId = profileId
     self.state = state
     self.authorizationURL = authorizationURL
+    self.tokenSource = "FILE"
+    self.tokenStorePath = tokenStorePath
+    self.tokenSourceHint = tokenSourceHint
   }
 }
 
@@ -135,7 +141,9 @@ public struct AuthService: AuthManaging, Sendable {
     return AuthLoginOutput(
       profileId: profile.id,
       state: "ready",
-      authorizationURL: noBrowser ? url.absoluteString : nil
+      authorizationURL: noBrowser ? url.absoluteString : nil,
+      tokenStorePath: storePath,
+      tokenSourceHint: "Unset \(profile.accessTokenEnvironmentVariable) and select this profile/configuration to use the written token; environment access tokens override the token store."
     )
   }
 
