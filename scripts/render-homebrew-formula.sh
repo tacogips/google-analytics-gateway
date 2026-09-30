@@ -86,7 +86,6 @@ render_formula() {
 class $class < Formula
   desc "$desc"
   homepage "$homebrew_homepage"
-  version "$version"
   license "MIT"
 
   livecheck do
