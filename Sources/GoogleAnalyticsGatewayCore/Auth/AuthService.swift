@@ -89,14 +89,14 @@ public struct AuthService: AuthManaging, Sendable {
         requiredTier: profile.capability
       )
     }
-    guard let clientPath = profile.oauthClientJSONPath, let storePath = profile.tokenStorePath else {
+    guard profile.oauthClientJSON != nil || profile.oauthClientJSONPath != nil, let storePath = profile.tokenStorePath else {
       throw GatewayError(
         code: .validationError,
         message: "Selected profile does not support installed OAuth login",
         recoveryGuidance: "Configure oauthClientJSONPath and tokenStorePath for this profile"
       )
     }
-    let client = try oauth.loadClient(path: clientPath)
+    let client = try oauth.loadClient(profile: profile)
     // The token-store destination is validated (and its missing ancestors
     // created, 0700) before the browser opens: the authorization code is
     // single-use, so discovering an unwritable store only after the exchange
@@ -131,7 +131,7 @@ public struct AuthService: AuthManaging, Sendable {
     }
     let code = try receiver.waitForCode(expectedState: state, timeoutSeconds: timeoutSeconds)
     let token = try oauth.exchange(
-      clientPath: clientPath,
+      client: client,
       code: code,
       verifier: verifier,
       redirectURI: receiver.redirectURI,

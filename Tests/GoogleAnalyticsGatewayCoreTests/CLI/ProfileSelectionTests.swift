@@ -27,7 +27,7 @@ struct ProfileSelectionTests {
       #expect(resolution.profile.accessTokenEnvironmentVariable
         == ProfileSelector.fallbackAccessTokenVariable)
       #expect(resolution.profile.oauthClientJSONPath == nil)
-      #expect(resolution.profile.tokenStorePath == nil)
+      #expect(resolution.profile.tokenStorePath?.hasSuffix("/google-analytics-gateway/credentials/" + tier.rawValue + "/default-env.json") == true)
     }
   }
 

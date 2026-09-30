@@ -247,3 +247,50 @@ kinko exec --env APPLE_SIGNING_IDENTITY,APPLE_ID,APPLE_PASSWORD,APPLE_TEAM_ID --
 ```
 
 See `packaging/homebrew/README.md` and `.agents/skills/` for release workflows.
+
+`auth login` opens the browser OAuth flow. `auth oauth2` remains an alias; both
+accept `--no-browser` and `--timeout-seconds` and use the selected profile.
+
+### Consistent external credential inputs
+
+Externally obtained credentials remain usable without `auth login`. Product
+variables use the `GOOGLE_ANALYTICS_GATEWAY_` prefix and these suffixes:
+`ACCESS_TOKEN` (token string), `TOKEN_STORE_JSON` (token JSON contents),
+`TOKEN_STORE_PATH` (file path), `OAUTH_CLIENT_JSON` (application JSON contents),
+and `OAUTH_CLIENT_PATH` (application client file).
+Profile variables use `CREDENTIAL_<NORMALIZED_ID>_<SUFFIX>` under the same prefix;
+uppercase IDs and replace hyphens with underscores. Profile variables override
+product defaults. Existing configured token variable names remain aliases.
+
+Conflicting aliases and ambiguous token sources are rejected without printing
+values. Fresh token JSON/files need no OAuth application. JSON/file tokens still
+must match the selected profile/product and exact scope bundle; expired inline
+JSON must be replaced. Direct tokens have no local grant metadata, so Google
+enforces their granted permissions. Reader/writer/admin command boundaries remain
+enforced independently of the token source.
+
+Status recognizes canonical token sources and selected file paths. Login/logout
+use canonical path overrides; configuration/token/client path collisions remain
+rejected. A supplied application path and token-store path can also configure
+login on the synthesized default profile. The shared application client needed
+for browser login with no user setup is still pending.
+
+OAuth application JSON supplied through `OAUTH_CLIENT_JSON` stays in memory and
+uses the same desktop-client validation as `OAUTH_CLIENT_PATH`. Login and refresh
+accept either source. Supplying both for the selected profile is an error.
+Application JSON is excluded from serialized profile configuration.
+
+### Default login credential storage
+
+A configuration file and explicit token-store path are optional for login.
+The synthesized profile keeps ID `default-env` and exactly the executable's
+scope bundle. Credentials default to
+`$XDG_STATE_HOME/google-analytics-gateway/credentials/<role>/default-env.json`,
+or `~/.local/state/google-analytics-gateway/credentials/<role>/default-env.json`.
+Reader, writer, and admin use separate stores. Login and ordinary requests use
+the same selected path. A registered application is still required until the
+distribution application is configured.
+
+Profile token inputs replace product token defaults as a group. Profile
+application inputs follow the same rule: profile application JSON replaces a
+product application path. Client/token/config path collision checks still apply.

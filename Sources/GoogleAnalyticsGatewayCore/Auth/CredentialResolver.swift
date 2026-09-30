@@ -6,6 +6,13 @@ public protocol CredentialResolving: Sendable {
 
 public protocol OAuthTokenRefreshing: Sendable {
   func refresh(clientPath: String, token: OAuthToken, requiredScopes: [String]) throws -> OAuthToken
+  func refresh(client: OAuthDesktopClient, token: OAuthToken, requiredScopes: [String]) throws -> OAuthToken
+}
+
+public extension OAuthTokenRefreshing {
+  func refresh(client: OAuthDesktopClient, token: OAuthToken, requiredScopes: [String]) throws -> OAuthToken {
+    throw GatewayError(code: .authenticationFailed, message: "This refresher does not support inline OAuth clients")
+  }
 }
 
 /// Turns a credential profile into a usable access token.
@@ -33,9 +40,10 @@ public struct CredentialResolver: CredentialResolving, Sendable {
     do {
       return try selectedAccessToken(profile: profile, environment: environment)
     } catch let error as GatewayError {
-      let hasEnvironmentToken = !(environment[profile.accessTokenEnvironmentVariable] ?? "").trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-      let source = hasEnvironmentToken ? "ENVIRONMENT_TOKEN" : "FILE"
-      let selected = hasEnvironmentToken ? profile.accessTokenEnvironmentVariable : (profile.tokenStorePath ?? "MISSING")
+      let input = try? AnalyticsCredentialInput(profile: profile, environment: environment)
+      let hasEnvironmentToken = input?.accessToken != nil
+      let source = input?.tokenStoreJSON != nil ? "ENVIRONMENT_JSON" : (hasEnvironmentToken ? "ENVIRONMENT_TOKEN" : "FILE")
+      let selected = hasEnvironmentToken ? profile.accessTokenEnvironmentVariable : (input?.tokenStorePath ?? profile.tokenStorePath ?? "MISSING")
       throw GatewayError(
         code: error.code, message: "\(error.message) (tokenSource=\(source); selected=\(selected))",
         requestID: error.requestID, httpStatus: error.httpStatus, capabilityID: error.capabilityID,
@@ -46,8 +54,9 @@ public struct CredentialResolver: CredentialResolving, Sendable {
   }
 
   private func selectedAccessToken(profile: CredentialProfile, environment: [String: String]) throws -> String {
-    if let token = environment[profile.accessTokenEnvironmentVariable]?
-      .trimmingCharacters(in: .whitespacesAndNewlines), !token.isEmpty {
+    let input = try AnalyticsCredentialInput(profile: profile, environment: environment)
+    let profile = try analyticsProfilePaths(profile, environment: environment)
+    if let token = input.accessToken {
       // The same shape rule the token store enforces: an interior control
       // byte would corrupt the Authorization header it is destined for.
       guard OAuthToken.isCredential(token) else {
@@ -58,6 +67,13 @@ public struct CredentialResolver: CredentialResolving, Sendable {
         )
       }
       return token
+    }
+    if let json = input.tokenStoreJSON {
+      let token = try OAuthTokenStore().decode(Data(json.utf8), profile: profile)
+      guard !token.isNearExpiry(now: now()) else {
+        throw GatewayError(code: .authenticationFailed, message: "Inline token JSON is expired; supply replacement credentials")
+      }
+      return token.accessToken
     }
     guard let storePath = profile.tokenStorePath else {
       throw GatewayError(
@@ -74,18 +90,21 @@ public struct CredentialResolver: CredentialResolving, Sendable {
     defer { lock.unlock() }
     let token = try tokenStore.read(path: storePath, profile: profile)
     guard !token.isNearExpiry(now: now()) else {
-      guard let clientPath = profile.oauthClientJSONPath, let refresher else {
+      guard profile.oauthClientJSON != nil || profile.oauthClientJSONPath != nil, let refresher else {
         throw GatewayError(
           code: .authenticationFailed,
           message: "OAuth token requires refresh",
           recoveryGuidance: "Run auth login for this profile"
         )
       }
-      let refreshed = try refresher.refresh(
-        clientPath: clientPath,
-        token: token,
-        requiredScopes: profile.oauthScopes
-      )
+      let refreshed: OAuthToken
+      if let json = profile.oauthClientJSON {
+        refreshed = try refresher.refresh(client: OAuthClient().loadClient(json: json), token: token, requiredScopes: profile.oauthScopes)
+      } else if let path = profile.oauthClientJSONPath {
+        refreshed = try refresher.refresh(clientPath: path, token: token, requiredScopes: profile.oauthScopes)
+      } else {
+        throw GatewayError(code: .authenticationFailed, message: "OAuth application client is missing")
+      }
       try tokenStore.write(refreshed, path: storePath, profile: profile)
       return refreshed.accessToken
     }
@@ -94,10 +113,21 @@ public struct CredentialResolver: CredentialResolving, Sendable {
 
   /// Reports credential readiness without ever returning a token value.
   public func status(profile: CredentialProfile, environment: [String: String]) -> AuthStatus {
-    let environmentTokenAvailable = !(environment[profile.accessTokenEnvironmentVariable] ?? "")
-      .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    guard let input = try? AnalyticsCredentialInput(profile: profile, environment: environment),
+          let profile = try? analyticsProfilePaths(profile, environment: environment) else {
+      return AuthStatus(profile: profile, environmentTokenAvailable: false, tokenStoreExists: false,
+                        state: "invalid", expiresAt: nil, hasRefreshToken: false)
+    }
+    let environmentTokenAvailable = input.accessToken != nil
+    if let json = input.tokenStoreJSON {
+      let token = try? OAuthTokenStore().decode(Data(json.utf8), profile: profile)
+      let state = token.map { $0.expiry <= now() ? "expired" : ($0.isNearExpiry(now: now()) ? "near-expiry" : "ready") } ?? "invalid"
+      return AuthStatus(profile: profile, environmentTokenAvailable: false, tokenStoreExists: false,
+                        state: state, expiresAt: token?.expiry, hasRefreshToken: token?.refreshToken != nil,
+                        source: "ENVIRONMENT_JSON")
+    }
     if environmentTokenAvailable {
-      let token = (environment[profile.accessTokenEnvironmentVariable] ?? "").trimmingCharacters(in: .whitespacesAndNewlines)
+      let token = input.accessToken ?? ""
       return AuthStatus(
         profile: profile, environmentTokenAvailable: true,
         tokenStoreExists: profile.tokenStorePath.map { SecureLocalFiles.pathEntryExists(path: $0) } ?? false,
@@ -202,7 +232,8 @@ public struct AuthStatus: Encodable, Equatable, Sendable {
     tokenStoreExists: Bool,
     state: String,
     expiresAt: Date?,
-    hasRefreshToken: Bool
+    hasRefreshToken: Bool,
+    source: String? = nil
   ) {
     product = profile.product
     capability = profile.capability
@@ -214,8 +245,8 @@ public struct AuthStatus: Encodable, Equatable, Sendable {
     self.state = state
     self.expiresAt = expiresAt
     self.hasRefreshToken = hasRefreshToken
-    tokenSource = environmentTokenAvailable ? "ENVIRONMENT_TOKEN" : "FILE"
+    tokenSource = source ?? (environmentTokenAvailable ? "ENVIRONMENT_TOKEN" : "FILE")
     tokenEnvironmentVariable = environmentTokenAvailable ? profile.accessTokenEnvironmentVariable : nil
-    tokenStorePath = environmentTokenAvailable ? nil : profile.tokenStorePath
+    tokenStorePath = environmentTokenAvailable || source == "ENVIRONMENT_JSON" ? nil : profile.tokenStorePath
   }
 }

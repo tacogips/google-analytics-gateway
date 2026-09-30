@@ -23,6 +23,8 @@ public struct CredentialProfile: Codable, Equatable, Sendable {
   public let capability: CapabilityTier
   public let oauthScopes: [String]
   public let accessTokenEnvironmentVariable: String
+  /// Call-scoped application JSON. Excluded from configuration encoding.
+  public let oauthClientJSON: String?
   public let oauthClientJSONPath: String?
   public let tokenStorePath: String?
 
@@ -32,6 +34,7 @@ public struct CredentialProfile: Codable, Equatable, Sendable {
     capability: CapabilityTier,
     oauthScopes: [String],
     accessTokenEnvironmentVariable: String,
+    oauthClientJSON: String? = nil,
     oauthClientJSONPath: String? = nil,
     tokenStorePath: String? = nil
   ) {
@@ -40,6 +43,7 @@ public struct CredentialProfile: Codable, Equatable, Sendable {
     self.capability = capability
     self.oauthScopes = oauthScopes
     self.accessTokenEnvironmentVariable = accessTokenEnvironmentVariable
+    self.oauthClientJSON = oauthClientJSON
     self.oauthClientJSONPath = oauthClientJSONPath
     self.tokenStorePath = tokenStorePath
   }
@@ -204,7 +208,7 @@ public struct CredentialProfileConfiguration: Codable, Equatable, Sendable {
   /// Two profiles sharing a token store would let a lower tier read a higher
   /// tier's token, and a store that aliases the config file would let a login
   /// overwrite the profile definitions. Both are rejected here.
-  private func validateResolvedPaths(profiles: [CredentialProfile], configURL: URL) throws {
+  func validateResolvedPaths(profiles: [CredentialProfile], configURL: URL) throws {
     let configPath = configURL.path
     var storePaths = Set<String>()
     var clientPaths = Set<String>()
@@ -226,9 +230,14 @@ public struct CredentialProfileConfiguration: Codable, Equatable, Sendable {
   private func validate() throws {
     guard !profiles.isEmpty else { throw configurationError("At least one credential profile is required") }
     var ids = Set<String>()
+    var normalizedIDs = Set<String>()
     for profile in profiles {
       guard Self.isSafeProfileID(profile.id), ids.insert(profile.id).inserted else {
         throw configurationError("Credential profile id is invalid or duplicated")
+      }
+      let normalizedID = profile.id.uppercased().replacingOccurrences(of: "-", with: "_")
+      guard normalizedIDs.insert(normalizedID).inserted else {
+        throw configurationError("Credential profile ids collide after environment-name normalization")
       }
       let configuredScopes = Set(profile.oauthScopes)
       guard !configuredScopes.isEmpty, configuredScopes.count == profile.oauthScopes.count else {
@@ -248,8 +257,8 @@ public struct CredentialProfileConfiguration: Codable, Equatable, Sendable {
       }
       let clientPath = profile.oauthClientJSONPath
       let storePath = profile.tokenStorePath
-      guard (clientPath == nil) == (storePath == nil) else {
-        throw configurationError("OAuth client and token-store paths must be configured together")
+      guard clientPath == nil || storePath != nil else {
+        throw configurationError("OAuth client login requires a token-store path")
       }
       if let clientPath, !SecureLocalFiles.isSafePath(clientPath) {
         throw configurationError("OAuth client path is unsafe")

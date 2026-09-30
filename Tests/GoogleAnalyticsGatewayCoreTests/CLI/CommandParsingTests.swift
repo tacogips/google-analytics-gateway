@@ -133,6 +133,16 @@ struct CommandParsingTests {
     }
   }
 
+  @Test("auth login routes to the browser OAuth command", arguments: [false, true])
+  func parsesLoginAlias(noBrowser: Bool) throws {
+    let arguments = ["auth", "login", "--config", "/fixtures/config.json", "--timeout-seconds", "30"]
+      + (noBrowser ? ["--no-browser"] : [])
+    #expect(try CommandParser.parse(arguments) == .authOAuth2(
+      selection: CredentialSelection(configPath: "/fixtures/config.json", profileID: nil),
+      noBrowser: noBrowser, timeoutSeconds: 30
+    ))
+  }
+
   @Test("The auth subcommands parse with their own options")
   func parsesAuthCommands() throws {
     let selection = CredentialSelection(configPath: "/fixtures/config.json", profileID: nil)

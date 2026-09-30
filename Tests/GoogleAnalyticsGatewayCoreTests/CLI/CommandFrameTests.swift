@@ -349,8 +349,8 @@ struct CommandFrameTests {
     #expect(!outcome.standardOutput.contains(fixtureAccessToken))
   }
 
-  @Test("auth oauth2 refuses to run against the synthesized profile")
-  func refusesLoginWithoutConfiguration() async throws {
+  @Test("auth oauth2 refuses login without a registered application client")
+  func refusesLoginWithoutApplicationClient() async throws {
     let outcome = await (try Self.frame()).run(arguments: ["auth", "oauth2"])
 
     #expect(outcome.exitCode == .usage)

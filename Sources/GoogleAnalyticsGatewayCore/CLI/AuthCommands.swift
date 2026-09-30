@@ -32,10 +32,10 @@ public struct AuthCommands: Sendable {
       let resolution = try ProfileSelector.resolve(
         selection: selection, tier: role.tier, environment: environment
       )
-      guard !resolution.isSynthesized else {
+      guard resolution.profile.oauthClientJSON != nil || resolution.profile.oauthClientJSONPath != nil, resolution.profile.tokenStorePath != nil else {
         throw GatewayError.validation(
-          "auth oauth2 requires a configuration document with an OAuth client.",
-          recovery: "Pass --config naming a profile with oauthClientJSONPath and tokenStorePath."
+          "A registered OAuth application client is required for browser login.",
+          recovery: "Supply OAUTH_CLIENT_JSON or OAUTH_CLIENT_PATH under GOOGLE_ANALYTICS_GATEWAY_, or select a configured client profile."
         )
       }
       let output = try auth.login(
@@ -111,7 +111,7 @@ public struct AuthCommands: Sendable {
         "oauthScopes": .array(profile.oauthScopes.map(JSONValue.string)),
         "accessTokenEnvironmentVariable": .string(profile.accessTokenEnvironmentVariable),
         "accessTokenEnvironmentVariableSet": .bool(tokenVariableSet),
-        "oauthClientConfigured": .bool(profile.oauthClientJSONPath != nil),
+        "oauthClientConfigured": .bool(profile.oauthClientJSON != nil || profile.oauthClientJSONPath != nil),
         "tokenStoreConfigured": .bool(profile.tokenStorePath != nil),
         "authStatus": try Self.encoded(report)
       ]

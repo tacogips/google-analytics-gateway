@@ -113,6 +113,9 @@ public struct OAuthTokenStore: OAuthTokenStoring, Sendable {
   public init() {}
 
   public func read(path: String, profile: CredentialProfile) throws -> OAuthToken {
+    guard SecureLocalFiles.pathEntryExists(path: path) else {
+      throw GatewayError(code: .authenticationFailed, message: "OAuth token store is missing", recoveryGuidance: "Run auth login for this profile")
+    }
     do {
       return try decode(
         SecureLocalFiles.readRegularFile(
@@ -148,7 +151,7 @@ public struct OAuthTokenStore: OAuthTokenStoring, Sendable {
     }
   }
 
-  private func decode(_ data: Data, profile: CredentialProfile) throws -> OAuthToken {
+  func decode(_ data: Data, profile: CredentialProfile) throws -> OAuthToken {
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601
     let token = try decoder.decode(OAuthToken.self, from: data)

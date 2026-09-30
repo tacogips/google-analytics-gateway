@@ -34,7 +34,7 @@ public enum ProfileSelector {
         )
       }
       return Resolution(
-        profile: try synthesizedProfile(tier: tier),
+        profile: try analyticsProfilePaths(synthesizedProfile(tier: tier, environment: environment), environment: environment),
         isSynthesized: true,
         configPath: nil
       )
@@ -45,7 +45,10 @@ public enum ProfileSelector {
       environment: environment
     )
     let configuration = try CredentialProfileConfiguration.load(path: path)
-    let profile = try select(from: configuration, id: selection.profileID, tier: tier)
+    let effectiveProfiles = try configuration.profiles.map { try analyticsProfilePaths($0, environment: environment) }
+    try configuration.validateResolvedPaths(profiles: effectiveProfiles, configURL: URL(fileURLWithPath: path).standardizedFileURL)
+    let effectiveConfiguration = try CredentialProfileConfiguration(profiles: effectiveProfiles)
+    let profile = try select(from: effectiveConfiguration, id: selection.profileID, tier: tier)
     guard tier.includes(profile.capability) else {
       throw GatewayError(
         code: .capabilityDenied,
@@ -73,15 +76,24 @@ public enum ProfileSelector {
     )
   }
 
-  private static func synthesizedProfile(tier: CapabilityTier) throws -> CredentialProfile {
-    CredentialProfile(
+  private static func synthesizedProfile(tier: CapabilityTier, environment: [String: String]) throws -> CredentialProfile {
+    let root: URL
+    if let state = environment["XDG_STATE_HOME"], !state.isEmpty {
+      guard state.hasPrefix("/"), SecureLocalFiles.isSafePath(state) else {
+        throw GatewayError.validation("XDG_STATE_HOME must be an absolute safe path")
+      }
+      root = URL(fileURLWithPath: state)
+    } else { root = FileManager.default.homeDirectoryForCurrentUser.appendingPathComponent(".local/state") }
+    let path = root.appendingPathComponent("google-analytics-gateway/credentials")
+      .appendingPathComponent(tier.rawValue).appendingPathComponent(fallbackProfileID + ".json").path
+    return CredentialProfile(
       id: fallbackProfileID,
       product: .combined,
       capability: tier,
       oauthScopes: GatewayProduct.combined.oauthScopes(for: tier),
       accessTokenEnvironmentVariable: fallbackAccessTokenVariable,
       oauthClientJSONPath: nil,
-      tokenStorePath: nil
+      tokenStorePath: path
     )
   }
 }

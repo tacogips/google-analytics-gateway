@@ -297,11 +297,11 @@ public enum CommandParser {
     guard let subcommand = positional.first, positional.count == 1 else {
       throw GatewayError.validation(
         "The auth command requires exactly one subcommand.",
-        recovery: "Use `auth oauth2`, `auth status`, or `auth logout`."
+        recovery: "Use `auth login` (or `auth oauth2`), `auth status`, or `auth logout`."
       )
     }
     switch subcommand {
-    case "oauth2":
+    case "login", "oauth2":
       return .authOAuth2(selection: selection, noBrowser: noBrowser, timeoutSeconds: timeoutSeconds)
     case "status":
       guard !noBrowser, timeoutSeconds == nil else {
@@ -316,7 +316,7 @@ public enum CommandParser {
     default:
       throw GatewayError.validation(
         "Unknown auth subcommand \(subcommand).",
-        recovery: "Use `auth oauth2`, `auth status`, or `auth logout`."
+        recovery: "Use `auth login` (or `auth oauth2`), `auth status`, or `auth logout`."
       )
     }
   }

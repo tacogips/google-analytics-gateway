@@ -38,8 +38,7 @@ public struct ProfileCredentialProvider: CredentialProvider {
         })
       }
     }
-    let injected = !(environment[profile.accessTokenEnvironmentVariable] ?? "")
-      .trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    let injected = try AnalyticsCredentialInput(profile: profile, environment: environment).accessToken != nil
     return ResolvedCredential(
       token: SecretValue(token),
       grantedScopes: injected ? [] : profile.oauthScopes
