@@ -35,6 +35,7 @@ let package = Package(
     .executable(name: "google-analytics-gateway-admin", targets: ["GoogleAnalyticsGatewayAdminCLI"])
   ],
   dependencies: [
+    .package(url: "https://github.com/tacogips/google-gateway-auth.git", revision: "dda86daa5ca1b9a761977e4a9891e4e4380cf4dd"),
     .package(url: "https://github.com/tacogips/gateway-sdk-kit.git", exact: "0.1.0")
   ],
   targets: [
@@ -55,17 +56,17 @@ let package = Package(
     ),
     .executableTarget(
       name: "GoogleAnalyticsGatewayReaderCLI",
-      dependencies: ["GoogleAnalyticsGatewayCore", "GoogleAnalyticsGatewayRead"]
+      dependencies: [.product(name: "GoogleGatewayAuth", package: "google-gateway-auth"), "GoogleAnalyticsGatewayCore", "GoogleAnalyticsGatewayRead"]
     ),
     .executableTarget(
       name: "GoogleAnalyticsGatewayWriterCLI",
-      dependencies: [
+      dependencies: [.product(name: "GoogleGatewayAuth", package: "google-gateway-auth"),
         "GoogleAnalyticsGatewayCore", "GoogleAnalyticsGatewayRead", "GoogleAnalyticsGatewayWrite"
       ]
     ),
     .executableTarget(
       name: "GoogleAnalyticsGatewayAdminCLI",
-      dependencies: [
+      dependencies: [.product(name: "GoogleGatewayAuth", package: "google-gateway-auth"),
         "GoogleAnalyticsGatewayCore", "GoogleAnalyticsGatewayRead",
         "GoogleAnalyticsGatewayWrite", "GoogleAnalyticsGatewayAdmin"
       ]

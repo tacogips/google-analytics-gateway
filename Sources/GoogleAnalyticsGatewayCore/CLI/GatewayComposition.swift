@@ -82,12 +82,14 @@ public enum GatewayComposition {
   /// Business JSON goes to stdout; usage diagnostics go to stderr.
   public static func runMain(
     role: RoleDescriptor,
-    definitions: [CapabilityDefinition]
+    definitions: [CapabilityDefinition],
+    arguments: [String] = Array(CommandLine.arguments.dropFirst()),
+    environment: [String: String] = ProcessInfo.processInfo.environment,
+    completion: @Sendable (Int32) -> Int32 = { $0 }
   ) async -> Never {
-    let arguments = Array(CommandLine.arguments.dropFirst())
     let outcome: CommandOutcome
     do {
-      let frame = try makeCommandFrame(role: role, definitions: definitions)
+      let frame = try makeCommandFrame(role: role, definitions: definitions, environment: environment)
       outcome = await frame.run(arguments: arguments)
     } catch let error as GatewayError {
       outcome = CommandOutcome(
@@ -109,6 +111,6 @@ public enum GatewayComposition {
     if !outcome.standardError.isEmpty {
       FileHandle.standardError.write(Data(outcome.standardError.utf8))
     }
-    exit(outcome.exitCode.rawValue)
+    exit(completion(outcome.exitCode.rawValue))
   }
 }
