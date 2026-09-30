@@ -65,7 +65,7 @@ public enum CommandParser {
   ]
 
   public static func parse(_ arguments: [String]) throws -> ParsedCommand {
-    guard !arguments.isEmpty else { return .help }
+    guard !arguments.isEmpty, arguments != ["auth"] else { return .help }
 
     var pretty = false
     var noBrowser = false
