@@ -1,5 +1,6 @@
 import CryptoKit
 import Foundation
+import GoogleGatewayAuth
 
 /// A Google desktop ("installed") OAuth client, loaded from the JSON Google
 /// hands out in the Cloud console.
@@ -12,13 +13,14 @@ public struct OAuthDesktopClient: Decodable, Equatable, Sendable {
   public static let authorizationEndpoint = "https://accounts.google.com/o/oauth2/v2/auth"
   public static let tokenEndpoint = "https://oauth2.googleapis.com/token"
 
+  public let kind: String
   public let clientId: String
   public let clientSecret: String?
   public let authUri: String
   public let tokenUri: String
   public let redirectUris: [String]
 
-  enum RootKeys: String, CodingKey { case installed }
+  enum RootKeys: String, CodingKey { case installed, web }
   enum CodingKeys: String, CodingKey {
     case clientId = "client_id"
     case clientSecret = "client_secret"
@@ -29,22 +31,25 @@ public struct OAuthDesktopClient: Decodable, Equatable, Sendable {
 
   public init(from decoder: any Decoder) throws {
     let rawRoot = try decoder.container(keyedBy: AuthAnyCodingKey.self)
-    guard Set(rawRoot.allKeys.map(\.stringValue)) == Set([RootKeys.installed.rawValue]) else {
+    let rootNames = Set(rawRoot.allKeys.map(\.stringValue))
+    guard rootNames == Set(["installed"]) || rootNames == Set(["web"]) else {
       throw GatewayError(code: .validationError, message: "OAuth client file contains unsupported fields")
     }
+    kind = rootNames.contains("web") ? "web" : "installed"
+    let key: RootKeys = kind == "web" ? .web : .installed
     let root = try decoder.container(keyedBy: RootKeys.self)
-    let rawInstalled = try root.nestedContainer(keyedBy: AuthAnyCodingKey.self, forKey: .installed)
+    let rawInstalled = try root.nestedContainer(keyedBy: AuthAnyCodingKey.self, forKey: key)
     // The console's real download also carries informational metadata
     // (project_id, auth_provider_x509_cert_url); both are inert here but must
     // not fail the unknown-field check.
     let allowed = Set([
       "client_id", "client_secret", "auth_uri", "token_uri", "redirect_uris",
-      "project_id", "auth_provider_x509_cert_url"
+      "project_id", "auth_provider_x509_cert_url", "javascript_origins"
     ])
     guard rawInstalled.allKeys.allSatisfy({ allowed.contains($0.stringValue) }) else {
       throw GatewayError(code: .validationError, message: "OAuth client file contains unsupported fields")
     }
-    let installed = try root.nestedContainer(keyedBy: CodingKeys.self, forKey: .installed)
+    let installed = try root.nestedContainer(keyedBy: CodingKeys.self, forKey: key)
     clientId = try installed.decode(String.self, forKey: .clientId)
     clientSecret = try installed.decodeIfPresent(String.self, forKey: .clientSecret)
     authUri = try installed.decode(String.self, forKey: .authUri)
@@ -98,13 +103,8 @@ public enum OAuthPKCE {
     state: String,
     verifier: String
   ) throws -> URL {
-    guard let redirect = URLComponents(string: redirectURI), redirect.scheme == "http",
-      redirect.host == "127.0.0.1",
-      redirect.port != nil, redirect.user == nil, redirect.password == nil, redirect.query == nil,
-      redirect.fragment == nil,
-      redirect.path.hasPrefix("/"), redirect.path.utf8.count <= 1_024, !redirect.path.contains(".."),
-      !redirect.path.utf8.contains(where: { $0 < 33 || $0 > 126 }), !redirectURI.contains("%"),
-      state.range(of: #"^[A-Za-z0-9_-]{43}$"#, options: .regularExpression) != nil else {
+    try OAuthCallbackSettings.validateClientRedirect(kind: client.kind, registered: client.redirectUris, redirect: redirectURI)
+    guard state.range(of: #"^[A-Za-z0-9_-]{43}$"#, options: .regularExpression) != nil else {
       throw GatewayError(code: .validationError, message: "OAuth callback configuration is invalid")
     }
     guard var components = URLComponents(string: OAuthDesktopClient.authorizationEndpoint) else {

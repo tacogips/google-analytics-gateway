@@ -2,6 +2,7 @@
 import AppKit
 #endif
 import Foundation
+import GoogleGatewayAuth
 
 public protocol AuthManaging: Sendable {
   func status(profile: CredentialProfile, environment: [String: String]) -> AuthStatus
@@ -82,6 +83,21 @@ public struct AuthService: AuthManaging, Sendable {
     redirectURI: String? = nil,
     timeoutSeconds: Int32 = 300
   ) throws -> AuthLoginOutput {
+    do {
+      return try performLogin(profile: profile, noBrowser: noBrowser, redirectURI: redirectURI, timeoutSeconds: timeoutSeconds)
+    } catch let error as GatewayAuthError {
+      let code: GatewayErrorCode = error.kind == .configuration ? .validationError
+        : error.kind == .callback ? .authenticationFailed : .transportFailed
+      throw GatewayError(code: code, message: error.description)
+    }
+  }
+
+  private func performLogin(
+    profile: CredentialProfile,
+    noBrowser: Bool,
+    redirectURI: String? = nil,
+    timeoutSeconds: Int32 = 300
+  ) throws -> AuthLoginOutput {
     if let supportedTier, !supportedTier.includes(profile.capability) {
       throw GatewayError(
         code: .capabilityDenied,
@@ -102,7 +118,12 @@ public struct AuthService: AuthManaging, Sendable {
     // single-use, so discovering an unwritable store only after the exchange
     // would discard a grant the operator cannot recover.
     try SecureLocalFiles.ensurePrivateParent(ofPath: storePath)
-    let receiver = try makeReceiver(redirectURI)
+    let receiver: any OAuthLoopbackReceiving
+    if client.kind == "web" || OAuthCallbackSettings.isConfigured(prefix: "GOOGLE_ANALYTICS_GATEWAY_") {
+      let settings = try OAuthCallbackSettings(prefix: "GOOGLE_ANALYTICS_GATEWAY_", requestedURI: redirectURI
+        ?? (client.kind == "web" && !OAuthCallbackSettings.isConfigured(prefix: "GOOGLE_ANALYTICS_GATEWAY_") ? client.redirectUris.first : nil))
+      receiver = ConfiguredOAuthReceiver(server: try OAuthCallbackServer(settings: settings))
+    } else { receiver = try makeReceiver(redirectURI) }
     // 43 URL-safe characters is the shape the callback validator requires of
     // the state, and 64 sits inside the PKCE verifier's 43...128 range.
     let state = try randomString(43)
@@ -162,5 +183,15 @@ public struct AuthService: AuthManaging, Sendable {
     let alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_")
     var generator = SystemRandomNumberGenerator()
     return String((0..<length).map { _ in alphabet[Int.random(in: alphabet.indices, using: &generator)] })
+  }
+}
+
+private struct ConfiguredOAuthReceiver: OAuthLoopbackReceiving {
+  let server: OAuthCallbackServer
+  var redirectURI: String { server.redirectURI.absoluteString }
+  func waitForCode(expectedState: String, timeoutSeconds: Int32) throws -> String {
+    let callback = try server.wait(expectedState: expectedState, timeout: TimeInterval(timeoutSeconds))
+    guard callback.error == nil, let code = callback.code else { throw GatewayAuthError("OAuth authorization failed") }
+    return code
   }
 }
