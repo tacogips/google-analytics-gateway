@@ -55,9 +55,14 @@ enum BuiltProducts {
     let process = Process()
     process.executableURL = try binaryURL(name)
     process.arguments = arguments
-    var environment = ProcessInfo.processInfo.environment
+    let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+    try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
+    defer { try? FileManager.default.removeItem(at: root) }
+    var environment = ProcessInfo.processInfo.environment.filter { !$0.key.hasPrefix("GOOGLE_ANALYTICS_GATEWAY_") }
     environment.removeValue(forKey: CredentialProfileConfiguration.pathEnvironmentVariable)
     environment.removeValue(forKey: ProfileSelector.fallbackAccessTokenVariable)
+    environment["XDG_CONFIG_HOME"] = root.appendingPathComponent("config").path
+    environment["XDG_STATE_HOME"] = root.appendingPathComponent("state").path
     process.environment = environment
 
     let outputPipe = Pipe()
