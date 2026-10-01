@@ -21,3 +21,17 @@ import Testing
     }
   }
 }
+
+@Test func analyticsLogoutWithMissingStateDirectoryIsIdempotent() throws {
+  let root = URL(fileURLWithPath: "/private/tmp").appendingPathComponent(UUID().uuidString)
+  let env = ["XDG_STATE_HOME": root.path, "XDG_CONFIG_HOME": root.path]
+  for role in [RoleDescriptor.reader, .writer, .admin] {
+    let commands = AuthCommands(role: role, auth: AuthService(), resolver: CredentialResolver(), environment: env)
+    for _ in 0..<2 {
+      let result = commands.logout(selection: .init(configPath: nil, profileID: nil))
+      #expect(result.exitCode == .success)
+      #expect(result.standardOutput.contains("LOGGED_OUT"))
+    }
+  }
+  #expect(!FileManager.default.fileExists(atPath: root.path))
+}

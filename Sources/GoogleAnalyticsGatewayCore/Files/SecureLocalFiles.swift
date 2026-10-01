@@ -185,7 +185,8 @@ public enum SecureLocalFiles {
     validate: (Data) throws -> Void
   ) throws -> Bool {
     let target = try Target(path: path)
-    let directory = try openDirectory(target.directory)
+    let directory = try openDirectory(target.directory, allowMissing: true)
+    guard directory >= 0 else { return false }
     defer { close(directory) }
     try validatePrivateDirectory(directory)
     let fd = openat(directory, target.name, O_RDONLY | O_NOFOLLOW)
@@ -279,12 +280,14 @@ public enum SecureLocalFiles {
     }
   }
 
-  private static func openDirectory(_ components: [String]) throws -> Int32 {
+  private static func openDirectory(_ components: [String], allowMissing: Bool = false) throws -> Int32 {
     var fd = open("/", O_RDONLY | O_DIRECTORY)
     guard fd >= 0 else { throw fileError("Unable to open filesystem root") }
     for component in components {
       let next = openat(fd, component, O_RDONLY | O_DIRECTORY | O_NOFOLLOW)
+      let failure = errno
       close(fd)
+      if next < 0, failure == ENOENT, allowMissing { return -1 }
       guard next >= 0 else { throw fileError("Configured path contains an unsafe directory") }
       fd = next
     }
