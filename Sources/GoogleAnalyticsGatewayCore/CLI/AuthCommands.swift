@@ -1,4 +1,5 @@
 import Foundation
+import GoogleGatewayAuth
 
 /// Implements `auth oauth2`, `auth status`, `auth logout`, and `doctor`.
 ///
@@ -73,8 +74,13 @@ public struct AuthCommands: Sendable {
       let resolution = try ProfileSelector.resolve(
         selection: selection, tier: role.tier, environment: environment
       )
-      let removed = try auth.logout(profile: resolution.profile)
-      return CommandEnvelope.success(.object(["removedLocalRecord": .bool(removed)]))
+      let input = try AnalyticsCredentialInput(profile: resolution.profile, environment: environment)
+      let external = input.accessToken != nil || input.tokenStoreJSON != nil || input.tokenStorePath != nil
+      let result = try GatewayLogout.perform(externalCredential: external) { try auth.logout(profile: resolution.profile) }
+      return CommandEnvelope.success(.object([
+        "removedLocalRecord": .bool(result.localTokenDeleted), "state": .string(result.state),
+        "externalCredentialPreserved": .bool(result.externalCredentialPreserved)
+      ]))
     } catch let error as GatewayError {
       return CommandEnvelope.failure(error)
     } catch {
