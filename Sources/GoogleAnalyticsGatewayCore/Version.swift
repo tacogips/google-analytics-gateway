@@ -1,3 +1,3 @@
 import Foundation
 
-public let googleAnalyticsGatewayVersion = "0.1.5"
+public let googleAnalyticsGatewayVersion = "0.1.6"

@@ -310,7 +310,14 @@ public enum SecureLocalFiles {
         throw GatewayError(code: .validationError, message: "Configured path is invalid")
       }
       let resolved = path.hasPrefix("/") ? path : FileManager.default.currentDirectoryPath + "/" + path
-      let parts = resolved.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
+      #if os(macOS)
+      // Expand only macOS's fixed system aliases. The descriptor walk continues
+      // to reject user-controlled symlinks in every remaining component.
+      let normalized = resolved.hasPrefix("/tmp/") || resolved.hasPrefix("/var/") ? "/private" + resolved : resolved
+      #else
+      let normalized = resolved
+      #endif
+      let parts = normalized.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
       guard !parts.isEmpty, parts.allSatisfy({ $0 != "." && $0 != ".." }), let name = parts.last else {
         throw GatewayError(code: .validationError, message: "Configured path is invalid")
       }
