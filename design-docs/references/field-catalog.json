@@ -1,0 +1,1378 @@
+[
+ {
+  "field": "gaAcknowledgeUserDataCollection",
+  "method": "analyticsadmin.properties.acknowledgeUserDataCollection",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}:acknowledgeUserDataCollection",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteAccount",
+  "method": "analyticsadmin.accounts.delete",
+  "http": "DELETE",
+  "path": "v1beta/accounts/{accountsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteConversionEvent",
+  "method": "analyticsadmin.properties.conversionEvents.delete",
+  "http": "DELETE",
+  "path": "v1beta/properties/{propertiesId}/conversionEvents/{conversionEventsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteDataStream",
+  "method": "analyticsadmin.properties.dataStreams.delete",
+  "http": "DELETE",
+  "path": "v1beta/properties/{propertiesId}/dataStreams/{dataStreamsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteFirebaseLink",
+  "method": "analyticsadmin.properties.firebaseLinks.delete",
+  "http": "DELETE",
+  "path": "v1beta/properties/{propertiesId}/firebaseLinks/{firebaseLinksId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteGoogleAdsLink",
+  "method": "analyticsadmin.properties.googleAdsLinks.delete",
+  "http": "DELETE",
+  "path": "v1beta/properties/{propertiesId}/googleAdsLinks/{googleAdsLinksId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteKeyEvent",
+  "method": "analyticsadmin.properties.keyEvents.delete",
+  "http": "DELETE",
+  "path": "v1beta/properties/{propertiesId}/keyEvents/{keyEventsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteMeasurementProtocolSecret",
+  "method": "analyticsadmin.properties.dataStreams.measurementProtocolSecrets.delete",
+  "http": "DELETE",
+  "path": "v1beta/properties/{propertiesId}/dataStreams/{dataStreamsId}/measurementProtocolSecrets/{measurementProtocolSecretsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaDeleteProperty",
+  "method": "analyticsadmin.properties.delete",
+  "http": "DELETE",
+  "path": "v1beta/properties/{propertiesId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gaProvisionAccountTicket",
+  "method": "analyticsadmin.accounts.provisionAccountTicket",
+  "http": "POST",
+  "path": "v1beta/accounts:provisionAccountTicket",
+  "service": "analyticsAdminV1Beta",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmCombineContainers",
+  "method": "tagmanager.accounts.containers.combine",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}:combine",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmCreateUserPermission",
+  "method": "tagmanager.accounts.user_permissions.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/user_permissions",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteBuiltInVariable",
+  "method": "tagmanager.accounts.containers.workspaces.built_in_variables.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/built_in_variables",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteClient",
+  "method": "tagmanager.accounts.containers.workspaces.clients.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/clients/{clientsId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteContainer",
+  "method": "tagmanager.accounts.containers.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteEnvironment",
+  "method": "tagmanager.accounts.containers.environments.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/environments/{environmentsId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteFolder",
+  "method": "tagmanager.accounts.containers.workspaces.folders.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/folders/{foldersId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteGtagConfig",
+  "method": "tagmanager.accounts.containers.workspaces.gtag_config.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/gtag_config/{gtag_configId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteTag",
+  "method": "tagmanager.accounts.containers.workspaces.tags.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/tags/{tagsId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteTemplate",
+  "method": "tagmanager.accounts.containers.workspaces.templates.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/templates/{templatesId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteTransformation",
+  "method": "tagmanager.accounts.containers.workspaces.transformations.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/transformations/{transformationsId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteTrigger",
+  "method": "tagmanager.accounts.containers.workspaces.triggers.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/triggers/{triggersId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteUserPermission",
+  "method": "tagmanager.accounts.user_permissions.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/user_permissions/{user_permissionsId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteVariable",
+  "method": "tagmanager.accounts.containers.workspaces.variables.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/variables/{variablesId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteVersion",
+  "method": "tagmanager.accounts.containers.versions.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/versions/{versionsId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteWorkspace",
+  "method": "tagmanager.accounts.containers.workspaces.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmDeleteZone",
+  "method": "tagmanager.accounts.containers.workspaces.zones.delete",
+  "http": "DELETE",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/zones/{zonesId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmLinkDestination",
+  "method": "tagmanager.accounts.containers.destinations.link",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/destinations:link",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmMoveTagId",
+  "method": "tagmanager.accounts.containers.move_tag_id",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}:move_tag_id",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmReauthorizeEnvironment",
+  "method": "tagmanager.accounts.containers.environments.reauthorize",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/environments/{environmentsId}:reauthorize",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmUndeleteVersion",
+  "method": "tagmanager.accounts.containers.versions.undelete",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/versions/{versionsId}:undelete",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmUpdateUserPermission",
+  "method": "tagmanager.accounts.user_permissions.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/user_permissions/{user_permissionsId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmUserPermission",
+  "method": "tagmanager.accounts.user_permissions.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/user_permissions/{user_permissionsId}",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gtmUserPermissions",
+  "method": "tagmanager.accounts.user_permissions.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/user_permissions",
+  "service": "tagManagerV2",
+  "tier": "admin"
+ },
+ {
+  "field": "gaAccount",
+  "method": "analyticsadmin.accounts.get",
+  "http": "GET",
+  "path": "v1beta/accounts/{accountsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaAccountSummaries",
+  "method": "analyticsadmin.accountSummaries.list",
+  "http": "GET",
+  "path": "v1beta/accountSummaries",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaAccounts",
+  "method": "analyticsadmin.accounts.list",
+  "http": "GET",
+  "path": "v1beta/accounts",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaAudienceExport",
+  "method": "analyticsdata.properties.audienceExports.get",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/audienceExports/{audienceExportsId}",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaAudienceExports",
+  "method": "analyticsdata.properties.audienceExports.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/audienceExports",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaBatchRunPivotReports",
+  "method": "analyticsdata.properties.batchRunPivotReports",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}:batchRunPivotReports",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaBatchRunReports",
+  "method": "analyticsdata.properties.batchRunReports",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}:batchRunReports",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCheckCompatibility",
+  "method": "analyticsdata.properties.checkCompatibility",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}:checkCompatibility",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaConversionEvent",
+  "method": "analyticsadmin.properties.conversionEvents.get",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/conversionEvents/{conversionEventsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaConversionEvents",
+  "method": "analyticsadmin.properties.conversionEvents.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/conversionEvents",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCustomDimension",
+  "method": "analyticsadmin.properties.customDimensions.get",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/customDimensions/{customDimensionsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCustomDimensions",
+  "method": "analyticsadmin.properties.customDimensions.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/customDimensions",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCustomMetric",
+  "method": "analyticsadmin.properties.customMetrics.get",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/customMetrics/{customMetricsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaCustomMetrics",
+  "method": "analyticsadmin.properties.customMetrics.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/customMetrics",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaDataRetentionSettings",
+  "method": "analyticsadmin.properties.getDataRetentionSettings",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/dataRetentionSettings",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaDataSharingSettings",
+  "method": "analyticsadmin.accounts.getDataSharingSettings",
+  "http": "GET",
+  "path": "v1beta/accounts/{accountsId}/dataSharingSettings",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaDataStream",
+  "method": "analyticsadmin.properties.dataStreams.get",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/dataStreams/{dataStreamsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaDataStreams",
+  "method": "analyticsadmin.properties.dataStreams.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/dataStreams",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaFirebaseLinks",
+  "method": "analyticsadmin.properties.firebaseLinks.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/firebaseLinks",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaGoogleAdsLinks",
+  "method": "analyticsadmin.properties.googleAdsLinks.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/googleAdsLinks",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaKeyEvent",
+  "method": "analyticsadmin.properties.keyEvents.get",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/keyEvents/{keyEventsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaKeyEvents",
+  "method": "analyticsadmin.properties.keyEvents.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/keyEvents",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaMeasurementProtocolSecret",
+  "method": "analyticsadmin.properties.dataStreams.measurementProtocolSecrets.get",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/dataStreams/{dataStreamsId}/measurementProtocolSecrets/{measurementProtocolSecretsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaMeasurementProtocolSecrets",
+  "method": "analyticsadmin.properties.dataStreams.measurementProtocolSecrets.list",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/dataStreams/{dataStreamsId}/measurementProtocolSecrets",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaMetadata",
+  "method": "analyticsdata.properties.getMetadata",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}/metadata",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaProperties",
+  "method": "analyticsadmin.properties.list",
+  "http": "GET",
+  "path": "v1beta/properties",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaProperty",
+  "method": "analyticsadmin.properties.get",
+  "http": "GET",
+  "path": "v1beta/properties/{propertiesId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaQueryAudienceExport",
+  "method": "analyticsdata.properties.audienceExports.query",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/audienceExports/{audienceExportsId}:query",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaRunAccountAccessReport",
+  "method": "analyticsadmin.accounts.runAccessReport",
+  "http": "POST",
+  "path": "v1beta/accounts/{accountsId}:runAccessReport",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaRunPivotReport",
+  "method": "analyticsdata.properties.runPivotReport",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}:runPivotReport",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaRunPropertyAccessReport",
+  "method": "analyticsadmin.properties.runAccessReport",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}:runAccessReport",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaRunRealtimeReport",
+  "method": "analyticsdata.properties.runRealtimeReport",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}:runRealtimeReport",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaRunReport",
+  "method": "analyticsdata.properties.runReport",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}:runReport",
+  "service": "analyticsDataV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gaSearchChangeHistoryEvents",
+  "method": "analyticsadmin.accounts.searchChangeHistoryEvents",
+  "http": "POST",
+  "path": "v1beta/accounts/{accountsId}:searchChangeHistoryEvents",
+  "service": "analyticsAdminV1Beta",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmAccount",
+  "method": "tagmanager.accounts.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmAccounts",
+  "method": "tagmanager.accounts.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmBuiltInVariables",
+  "method": "tagmanager.accounts.containers.workspaces.built_in_variables.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/built_in_variables",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmClient",
+  "method": "tagmanager.accounts.containers.workspaces.clients.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/clients/{clientsId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmClients",
+  "method": "tagmanager.accounts.containers.workspaces.clients.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/clients",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmContainer",
+  "method": "tagmanager.accounts.containers.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmContainerSnippet",
+  "method": "tagmanager.accounts.containers.snippet",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}:snippet",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmContainers",
+  "method": "tagmanager.accounts.containers.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmDestination",
+  "method": "tagmanager.accounts.containers.destinations.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/destinations/{destinationsId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmDestinations",
+  "method": "tagmanager.accounts.containers.destinations.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/destinations",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmEnvironment",
+  "method": "tagmanager.accounts.containers.environments.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/environments/{environmentsId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmEnvironments",
+  "method": "tagmanager.accounts.containers.environments.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/environments",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmFolder",
+  "method": "tagmanager.accounts.containers.workspaces.folders.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/folders/{foldersId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmFolders",
+  "method": "tagmanager.accounts.containers.workspaces.folders.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/folders",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmGtagConfig",
+  "method": "tagmanager.accounts.containers.workspaces.gtag_config.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/gtag_config/{gtag_configId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmGtagConfigs",
+  "method": "tagmanager.accounts.containers.workspaces.gtag_config.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/gtag_config",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmLatestVersionHeader",
+  "method": "tagmanager.accounts.containers.version_headers.latest",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/version_headers:latest",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmLiveVersion",
+  "method": "tagmanager.accounts.containers.versions.live",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/versions:live",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmLookupContainer",
+  "method": "tagmanager.accounts.containers.lookup",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/containers:lookup",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmTag",
+  "method": "tagmanager.accounts.containers.workspaces.tags.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/tags/{tagsId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmTags",
+  "method": "tagmanager.accounts.containers.workspaces.tags.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/tags",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmTemplate",
+  "method": "tagmanager.accounts.containers.workspaces.templates.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/templates/{templatesId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmTemplates",
+  "method": "tagmanager.accounts.containers.workspaces.templates.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/templates",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmTransformation",
+  "method": "tagmanager.accounts.containers.workspaces.transformations.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/transformations/{transformationsId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmTransformations",
+  "method": "tagmanager.accounts.containers.workspaces.transformations.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/transformations",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmTrigger",
+  "method": "tagmanager.accounts.containers.workspaces.triggers.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/triggers/{triggersId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmTriggers",
+  "method": "tagmanager.accounts.containers.workspaces.triggers.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/triggers",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmVariable",
+  "method": "tagmanager.accounts.containers.workspaces.variables.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/variables/{variablesId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmVariables",
+  "method": "tagmanager.accounts.containers.workspaces.variables.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/variables",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmVersion",
+  "method": "tagmanager.accounts.containers.versions.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/versions/{versionsId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmVersionHeaders",
+  "method": "tagmanager.accounts.containers.version_headers.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/version_headers",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmWorkspace",
+  "method": "tagmanager.accounts.containers.workspaces.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmWorkspaceStatus",
+  "method": "tagmanager.accounts.containers.workspaces.getStatus",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/status",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmWorkspaces",
+  "method": "tagmanager.accounts.containers.workspaces.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmZone",
+  "method": "tagmanager.accounts.containers.workspaces.zones.get",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/zones/{zonesId}",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gtmZones",
+  "method": "tagmanager.accounts.containers.workspaces.zones.list",
+  "http": "GET",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/zones",
+  "service": "tagManagerV2",
+  "tier": "reader"
+ },
+ {
+  "field": "gaArchiveCustomDimension",
+  "method": "analyticsadmin.properties.customDimensions.archive",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/customDimensions/{customDimensionsId}:archive",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaArchiveCustomMetric",
+  "method": "analyticsadmin.properties.customMetrics.archive",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/customMetrics/{customMetricsId}:archive",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateAudienceExport",
+  "method": "analyticsdata.properties.audienceExports.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/audienceExports",
+  "service": "analyticsDataV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateConversionEvent",
+  "method": "analyticsadmin.properties.conversionEvents.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/conversionEvents",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateCustomDimension",
+  "method": "analyticsadmin.properties.customDimensions.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/customDimensions",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateCustomMetric",
+  "method": "analyticsadmin.properties.customMetrics.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/customMetrics",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateDataStream",
+  "method": "analyticsadmin.properties.dataStreams.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/dataStreams",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateFirebaseLink",
+  "method": "analyticsadmin.properties.firebaseLinks.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/firebaseLinks",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateGoogleAdsLink",
+  "method": "analyticsadmin.properties.googleAdsLinks.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/googleAdsLinks",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateKeyEvent",
+  "method": "analyticsadmin.properties.keyEvents.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/keyEvents",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateMeasurementProtocolSecret",
+  "method": "analyticsadmin.properties.dataStreams.measurementProtocolSecrets.create",
+  "http": "POST",
+  "path": "v1beta/properties/{propertiesId}/dataStreams/{dataStreamsId}/measurementProtocolSecrets",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaCreateProperty",
+  "method": "analyticsadmin.properties.create",
+  "http": "POST",
+  "path": "v1beta/properties",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateAccount",
+  "method": "analyticsadmin.accounts.patch",
+  "http": "PATCH",
+  "path": "v1beta/accounts/{accountsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateConversionEvent",
+  "method": "analyticsadmin.properties.conversionEvents.patch",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}/conversionEvents/{conversionEventsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateCustomDimension",
+  "method": "analyticsadmin.properties.customDimensions.patch",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}/customDimensions/{customDimensionsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateCustomMetric",
+  "method": "analyticsadmin.properties.customMetrics.patch",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}/customMetrics/{customMetricsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateDataRetentionSettings",
+  "method": "analyticsadmin.properties.updateDataRetentionSettings",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}/dataRetentionSettings",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateDataStream",
+  "method": "analyticsadmin.properties.dataStreams.patch",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}/dataStreams/{dataStreamsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateGoogleAdsLink",
+  "method": "analyticsadmin.properties.googleAdsLinks.patch",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}/googleAdsLinks/{googleAdsLinksId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateKeyEvent",
+  "method": "analyticsadmin.properties.keyEvents.patch",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}/keyEvents/{keyEventsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateMeasurementProtocolSecret",
+  "method": "analyticsadmin.properties.dataStreams.measurementProtocolSecrets.patch",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}/dataStreams/{dataStreamsId}/measurementProtocolSecrets/{measurementProtocolSecretsId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gaUpdateProperty",
+  "method": "analyticsadmin.properties.patch",
+  "http": "PATCH",
+  "path": "v1beta/properties/{propertiesId}",
+  "service": "analyticsAdminV1Beta",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmBulkUpdateWorkspace",
+  "method": "tagmanager.accounts.containers.workspaces.bulk_update",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/bulk_update",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateBuiltInVariable",
+  "method": "tagmanager.accounts.containers.workspaces.built_in_variables.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/built_in_variables",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateClient",
+  "method": "tagmanager.accounts.containers.workspaces.clients.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/clients",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateContainer",
+  "method": "tagmanager.accounts.containers.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateEnvironment",
+  "method": "tagmanager.accounts.containers.environments.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/environments",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateFolder",
+  "method": "tagmanager.accounts.containers.workspaces.folders.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/folders",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateGtagConfig",
+  "method": "tagmanager.accounts.containers.workspaces.gtag_config.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/gtag_config",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateTag",
+  "method": "tagmanager.accounts.containers.workspaces.tags.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/tags",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateTemplate",
+  "method": "tagmanager.accounts.containers.workspaces.templates.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/templates",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateTransformation",
+  "method": "tagmanager.accounts.containers.workspaces.transformations.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/transformations",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateTrigger",
+  "method": "tagmanager.accounts.containers.workspaces.triggers.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/triggers",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateVariable",
+  "method": "tagmanager.accounts.containers.workspaces.variables.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/variables",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateVersion",
+  "method": "tagmanager.accounts.containers.workspaces.create_version",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}:create_version",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateWorkspace",
+  "method": "tagmanager.accounts.containers.workspaces.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmCreateZone",
+  "method": "tagmanager.accounts.containers.workspaces.zones.create",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/zones",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmFolderEntities",
+  "method": "tagmanager.accounts.containers.workspaces.folders.entities",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/folders/{foldersId}:entities",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmImportFromGallery",
+  "method": "tagmanager.accounts.containers.workspaces.templates.import_from_gallery",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/templates:import_from_gallery",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmMoveEntitiesToFolder",
+  "method": "tagmanager.accounts.containers.workspaces.folders.move_entities_to_folder",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/folders/{foldersId}:move_entities_to_folder",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmPublishVersion",
+  "method": "tagmanager.accounts.containers.versions.publish",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/versions/{versionsId}:publish",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmQuickPreviewWorkspace",
+  "method": "tagmanager.accounts.containers.workspaces.quick_preview",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}:quick_preview",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmResolveConflictWorkspace",
+  "method": "tagmanager.accounts.containers.workspaces.resolve_conflict",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}:resolve_conflict",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertBuiltInVariable",
+  "method": "tagmanager.accounts.containers.workspaces.built_in_variables.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/built_in_variables:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertClient",
+  "method": "tagmanager.accounts.containers.workspaces.clients.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/clients/{clientsId}:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertFolder",
+  "method": "tagmanager.accounts.containers.workspaces.folders.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/folders/{foldersId}:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertTag",
+  "method": "tagmanager.accounts.containers.workspaces.tags.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/tags/{tagsId}:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertTemplate",
+  "method": "tagmanager.accounts.containers.workspaces.templates.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/templates/{templatesId}:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertTransformation",
+  "method": "tagmanager.accounts.containers.workspaces.transformations.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/transformations/{transformationsId}:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertTrigger",
+  "method": "tagmanager.accounts.containers.workspaces.triggers.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/triggers/{triggersId}:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertVariable",
+  "method": "tagmanager.accounts.containers.workspaces.variables.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/variables/{variablesId}:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmRevertZone",
+  "method": "tagmanager.accounts.containers.workspaces.zones.revert",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/zones/{zonesId}:revert",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmSetLatestVersion",
+  "method": "tagmanager.accounts.containers.versions.set_latest",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/versions/{versionsId}:set_latest",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmSyncWorkspace",
+  "method": "tagmanager.accounts.containers.workspaces.sync",
+  "http": "POST",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}:sync",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateAccount",
+  "method": "tagmanager.accounts.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateClient",
+  "method": "tagmanager.accounts.containers.workspaces.clients.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/clients/{clientsId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateContainer",
+  "method": "tagmanager.accounts.containers.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateEnvironment",
+  "method": "tagmanager.accounts.containers.environments.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/environments/{environmentsId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateFolder",
+  "method": "tagmanager.accounts.containers.workspaces.folders.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/folders/{foldersId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateGtagConfig",
+  "method": "tagmanager.accounts.containers.workspaces.gtag_config.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/gtag_config/{gtag_configId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateTag",
+  "method": "tagmanager.accounts.containers.workspaces.tags.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/tags/{tagsId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateTemplate",
+  "method": "tagmanager.accounts.containers.workspaces.templates.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/templates/{templatesId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateTransformation",
+  "method": "tagmanager.accounts.containers.workspaces.transformations.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/transformations/{transformationsId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateTrigger",
+  "method": "tagmanager.accounts.containers.workspaces.triggers.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/triggers/{triggersId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateVariable",
+  "method": "tagmanager.accounts.containers.workspaces.variables.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/variables/{variablesId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateVersion",
+  "method": "tagmanager.accounts.containers.versions.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/versions/{versionsId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateWorkspace",
+  "method": "tagmanager.accounts.containers.workspaces.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ },
+ {
+  "field": "gtmUpdateZone",
+  "method": "tagmanager.accounts.containers.workspaces.zones.update",
+  "http": "PUT",
+  "path": "tagmanager/v2/accounts/{accountsId}/containers/{containersId}/workspaces/{workspacesId}/zones/{zonesId}",
+  "service": "tagManagerV2",
+  "tier": "writer"
+ }
+]

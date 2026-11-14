@@ -1,0 +1,35 @@
+name: macOS build
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: macos-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build all gateway executables on macOS
+    runs-on: macos-15
+    timeout-minutes: 30
+    steps:
+      - name: Check Out Repository
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+        with:
+          persist-credentials: false
+
+      # The gateway targets macOS 14+ and uses Darwin-only APIs (openat-based
+      # secure file traversal, BSD-socket OAuth loopback), so the compile smoke
+      # runs on a macOS runner rather than a Linux container.
+      - name: Build Release CLIs
+        run: |
+          set -euo pipefail
+          swift --version
+          for product in google-analytics-gateway-reader google-analytics-gateway-writer google-analytics-gateway-admin; do
+            swift build -c release --product "$product"
+          done
