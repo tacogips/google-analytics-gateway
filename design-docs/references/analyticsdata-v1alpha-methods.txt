@@ -1,0 +1,15 @@
+analyticsdata.properties.audienceLists.create	POST v1alpha/properties/{propertiesId}/audienceLists
+analyticsdata.properties.audienceLists.get	GET v1alpha/properties/{propertiesId}/audienceLists/{audienceListsId}
+analyticsdata.properties.audienceLists.list	GET v1alpha/properties/{propertiesId}/audienceLists
+analyticsdata.properties.audienceLists.query	POST v1alpha/properties/{propertiesId}/audienceLists/{audienceListsId}:query
+analyticsdata.properties.getMetadata	GET v1alpha/properties/{propertiesId}/metadata
+analyticsdata.properties.getPropertyQuotasSnapshot	GET v1alpha/properties/{propertiesId}/propertyQuotasSnapshot
+analyticsdata.properties.recurringAudienceLists.create	POST v1alpha/properties/{propertiesId}/recurringAudienceLists
+analyticsdata.properties.recurringAudienceLists.get	GET v1alpha/properties/{propertiesId}/recurringAudienceLists/{recurringAudienceListsId}
+analyticsdata.properties.recurringAudienceLists.list	GET v1alpha/properties/{propertiesId}/recurringAudienceLists
+analyticsdata.properties.reportTasks.create	POST v1alpha/properties/{propertiesId}/reportTasks
+analyticsdata.properties.reportTasks.get	GET v1alpha/properties/{propertiesId}/reportTasks/{reportTasksId}
+analyticsdata.properties.reportTasks.list	GET v1alpha/properties/{propertiesId}/reportTasks
+analyticsdata.properties.reportTasks.query	POST v1alpha/properties/{propertiesId}/reportTasks/{reportTasksId}:query
+analyticsdata.properties.runFunnelReport	POST v1alpha/properties/{propertiesId}:runFunnelReport
+analyticsdata.properties.runReport	POST v1alpha/properties/{propertiesId}:runReport
